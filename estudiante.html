@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vista Estudiante</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="student.js" type="module"></script>
+
+</head>
+<body>
+    <header>
+        <h1>Bienvenido, Estudiante</h1>
+    </header>
+    <main class="student-container">
+        <section class="profile">
+            <h2>Tu Perfil</h2>
+            <p><strong>Nombre:</strong> Juan Pérez</p>
+            <p><strong>Código:</strong> 123456</p>
+            <p><strong>Programa:</strong> Ingeniería de Software</p>
+        </section>
+        <section class="options">
+            <h2>Opciones</h2>
+            <button id="viewGrades">Ver Notas</button>
+            <li><a href="notas.html"><button class="menu-btn" data-target="content2">Ver Notas</button></a></li>
+            <button id="viewSchedule">Ver Horarios</button>
+        </section>
+        <section id="studentOutput" class="output">
+            <!-- Aquí se mostrará contenido dinámico -->
+        </section>
+    </main>
+</body>
+</html>

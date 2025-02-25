@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Universidad de Manizales</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <img src="imagenes/umzl.png">
+        <h1>Programas Técnicos y Tecnológicos</h1>
+    </header>
+
+    <div class="dashboard-container">
+        <!-- Sidebar (Menú de navegación) -->
+        <nav class="sidebar">
+            <h2 id="nameUserSession">Bienvenido</h2>
+            <ul class="menu">
+               
+              
+                <li><button class="menu-btn" data-target="content2"> Horarios</button></li>
+                <li><button class="menu-btn" data-target="content3"> Tablero</button></li>
+                <li><a href="profesor.html"><button class="menu-btn" data-target="content4">Profesor</button></a></li>
+                <li><a href="notas.html"><button class="menu-btn" data-target="content2">Notas</button></a></li>
+                <li><a href="estudiante.html"><button class="menu-btn" data-target="content5"> Estudiantes</button></a> </li>
+    
+                <li><button id="exitSession" class="logout-btn"> Salir</button></li>
+            </ul>
+        </nav>
+
+        <section id="content1" class="content-section active">Colegios</section>
+        <section id="content2" class="content-section">Horarios<div id="contentHorarios"></div></section>
+        <section id="content3" class="content-section">Tablero</section>
+        <section id="content4" class="content-section">Profesor</section>
+        <section id="content5" class="content-section">Estudiantes</section>
+
+        <!-- Contenido dinámico -->
+        <main class="content">
+            <section id="content1" class="content-section active">
+                <h2> Colegios</h2>
+                <p>Información sobre los colegios asociados al programa.</p>
+            </section>
+            <section id="content2" class="content-section">
+                <h2> Horarios</h2>
+                <div id="content"></div>
+            </section>
+            <section id="content3" class="content-section">
+                <h2> Tablero</h2>
+                <p>Accede a tus materiales y actividades.</p>
+            </section>
+            <section id="content4" class="content-section">
+                <h2> Profesor</h2>
+                <p>Información y gestión de profesores.</p>
+            </section> 
+            <section id="content5" class="content-section">
+                <h2> Estudiantes</h2>
+                <p>Información y gestión de Estudiantes.</p>
+            </section> 
+            <video   autoplay loop muted  width="700" >
+                <source src="imagenes/video1.mp4" type="video/mp4">
+            </video>
+
+            
+        </main>
+    </div>
+
+</body>
+</html>

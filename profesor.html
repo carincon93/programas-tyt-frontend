@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vista Profesor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Bienvenido, Profesor</h1>
+    </header>
+    <main class="teacher-container">
+        <section class="profile">
+            <h2>Tu Perfil</h2>
+            <p><strong>Nombre:</strong> Ana García</p>
+            <p><strong>ID:</strong> P00123</p>
+            <p><strong>Departamento:</strong> Ingeniería de Software</p>
+        </section>
+        <section class="options">
+            <h2>Opciones</h2>
+            <button id="viewClasses">Ver Clases</button>
+            <button id="viewStudents">Ver Estudiantes</button>
+        </section>
+        <section id="teacherOutput" class="output">
+            <!-- Aquí se mostrará contenido dinámico -->
+        </section>
+    </main>
+    <script src="./dashboard.js" type="module"></script>
+</body>
+</html>
