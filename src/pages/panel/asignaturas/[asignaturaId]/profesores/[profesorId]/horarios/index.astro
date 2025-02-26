@@ -1,0 +1,16 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import HorarioTable from "./_table";
+
+const { asignaturaId, profesorId } = Astro.params;
+---
+
+<Layout>
+  Asignaturas
+
+  <HorarioTable
+    asignaturaProfesorId={asignaturaId}
+    profesorId={profesorId}
+    client:load
+  />
+</Layout>

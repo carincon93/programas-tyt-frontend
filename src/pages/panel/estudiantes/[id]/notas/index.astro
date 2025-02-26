@@ -1,0 +1,12 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import NotasTable from "./_table";
+
+const id = Astro.params.id;
+---
+
+<Layout>
+  Estudiante Nota
+
+  <NotasTable estudianteId={id} client:load />
+</Layout>

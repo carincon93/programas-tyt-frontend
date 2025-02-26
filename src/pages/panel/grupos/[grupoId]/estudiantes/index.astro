@@ -1,0 +1,12 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import EstudiantesTable from "./_table";
+
+const { grupoId } = Astro.params;
+---
+
+<Layout>
+  Estudiantes
+
+  <EstudiantesTable grupoId={grupoId} client:load />
+</Layout>
