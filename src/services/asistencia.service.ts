@@ -2,14 +2,14 @@ import type { Asistencia } from "@/lib/types.ts";
 import { fetchWithAuth } from "@/lib/utils.ts";
 
 // Función para obtener las asistencias
-export async function fetchAsistenciasData(estudianteId: number): Promise<{
+export async function fetchAsistenciasData(): Promise<{
   ok: boolean;
   data?: Asistencia[];
   success?: string;
   error?: string;
 }> {
   return await fetchWithAuth<Asistencia[]>(
-    `asistencias/estudiantes/${estudianteId}`,
+    `asistencias/`,
     "GET"
   );
 }
