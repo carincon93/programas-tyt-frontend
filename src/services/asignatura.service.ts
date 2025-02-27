@@ -1,4 +1,4 @@
-import type { Asignatura } from "@/lib/types.ts";
+import type { Asignatura, AsignaturaProfesor } from "@/lib/types.ts";
 import { fetchWithAuth } from "@/lib/utils.ts";
 
 // Función para obtener las asignaturas
@@ -20,8 +20,6 @@ export async function fetchAsignaturaByIdData(asignaturaId: number): Promise<{
   return await fetchWithAuth<Asignatura>(`asignaturas/${asignaturaId}`, "GET");
 }
 
-
-
 // Función para actualizar o crear una asignatura
 export const createOrUpdateAsignatura = async (
   asignatura: Asignatura | undefined,
@@ -40,6 +38,20 @@ export const createOrUpdateAsignatura = async (
     isEdit ? "PATCH" : "POST",
     formData
   );
+};
+
+export const assignAsignaturaProfesores = async (
+  asignatura: Asignatura,
+  formData: number[]
+): Promise<{
+  ok: boolean;
+  data?: AsignaturaProfesor[];
+  success?: string;
+  error?: string;
+}> => {
+  const url = `asignaturas/${asignatura.id}/profesores`;
+
+  return await fetchWithAuth<AsignaturaProfesor[]>(url, "POST", formData);
 };
 
 // Función para eliminar una asignatura

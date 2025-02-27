@@ -4,18 +4,31 @@ import {
   fetchAsistenciasByEstudianteData,
 } from "@/services/asistencia.service";
 import { fetchEstudianteByIdData } from "@/services/estudiante.service";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import AsistenciaForm from "./_form";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Edit2, PlusCircle, Trash2 } from "lucide-react";
+import CustomDialog from "@/components/CustomDialog";
+import { toast } from "sonner";
 
 interface EstudianteAsistenciasTableProps {
-  asignaturaId: string | undefined;
+  asignaturaProfesorId: string | undefined;
   estudianteId: string | undefined;
 }
 
 export default function EstudianteAsistenciasTable({
-  asignaturaId,
+  asignaturaProfesorId,
   estudianteId,
 }: EstudianteAsistenciasTableProps) {
+  const [open, setOpen] = useState<boolean>(false);
   const [asistenciaSelected, setAsistenciaSelected] = useState<Asistencia>();
   const [asistencias, setAsistencias] = useState<Asistencia[]>([]);
   const [estudiante, setEstudiante] = useState<Estudiante>();
@@ -37,12 +50,22 @@ export default function EstudianteAsistenciasTable({
   const refreshAsistencias = async () => {
     fetchAsistenciasByEstudiante();
     setAsistenciaSelected(undefined);
+    setOpen(false);
   };
 
   const removeAsistencia = async (asistencia: Asistencia) => {
     const response = await deleteAsistencia(asistencia);
-    if (response.ok) refreshAsistencias();
+    if (response.ok) {
+      refreshAsistencias();
+      toast("Asistencia eliminada correctamente");
+    }
   };
+
+  useEffect(() => {
+    if (!open) {
+      setAsistenciaSelected(undefined);
+    }
+  }, [open]);
 
   useEffect(() => {
     fetchAsistenciasByEstudiante();
@@ -55,52 +78,71 @@ export default function EstudianteAsistenciasTable({
     <div>
       <h1 className="uppercase">{estudiante?.user.nombres}</h1>
       <div>
-        {estudianteId && asignaturaId && (
-          <AsistenciaForm
-            key={asistenciaSelected?.id}
-            asistencia={asistenciaSelected}
-            estudianteId={+estudianteId}
-            asignaturaId={+asignaturaId}
-            onAsistenciaCreatedOrUpdated={refreshAsistencias}
-          />
+        {estudianteId && asignaturaProfesorId && (
+          <CustomDialog
+            triggerText={
+              <>
+                <PlusCircle />
+                Añadir asistencia
+              </>
+            }
+            open={open}
+            setOpen={setOpen}
+          >
+            <AsistenciaForm
+              key={asistenciaSelected?.id}
+              asistencia={asistenciaSelected}
+              estudianteId={+estudianteId}
+              asignaturaProfesorId={+asignaturaProfesorId}
+              onAsistenciaCreatedOrUpdated={refreshAsistencias}
+            />
+          </CustomDialog>
         )}
       </div>
-      <table className="table-fixed w-full">
-        <thead>
-          <tr>
-            <th className="text-left">Asignatura</th>
-            <th className="text-left">¿Asistió?</th>
-            <th className="text-left">Fecha</th>
-            <th className="text-left">Observación</th>
-            <th className="text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table className="table-fixed w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-left">Asignatura</TableHead>
+            <TableHead className="text-left">¿Asistió?</TableHead>
+            <TableHead className="text-left">Fecha</TableHead>
+            <TableHead className="text-left">Observación</TableHead>
+            <TableHead className="text-left">Acciones</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {asistencias.map((asistencia) => (
-            <tr>
-              <td>{asistencia.asignatura.nombre}</td>
-              <td>{asistencia.asiste ? "Si" : "No"}</td>
-              <td>{asistencia.fecha}</td>
-              <td>{asistencia.observacion}</td>
-              <td>
-                Acciones
-                <button
-                  onClick={() => setAsistenciaSelected(asistencia)}
-                  className="btn btn-primary"
+            <TableRow key={asistencia.id}>
+              <TableCell>
+                {asistencia.asignaturaProfesor.asignatura.nombre}
+              </TableCell>
+              <TableCell>{asistencia.asiste ? "Si" : "No"}</TableCell>
+              <TableCell>{asistencia.fecha}</TableCell>
+              <TableCell>{asistencia.observacion}</TableCell>
+              <TableCell className="space-x-2">
+                <Button
+                  onClick={() => {
+                    setOpen(true), setAsistenciaSelected(asistencia);
+                  }}
                 >
-                  Editar
-                </button>
-                <button
-                  onClick={() => removeAsistencia(asistencia)}
-                  className="btn btn-danger"
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
+                  <Edit2 />
+                </Button>
+                <CustomDialog triggerText={<Trash2 color="red" />}>
+                  <p className="my-4">
+                    ¿Está seguro/a que desea eliminar la{" "}
+                    <strong>asistencia</strong>?
+                  </p>
+                  <Button
+                    onClick={() => removeAsistencia(asistencia)}
+                    variant="destructive"
+                  >
+                    Eliminar
+                  </Button>
+                </CustomDialog>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

@@ -5,8 +5,21 @@ import {
 } from "@/services/programa.service";
 import { useEffect, useState } from "react";
 import ProgramaForm from "./_form";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Edit2, PlusCircle, Trash2 } from "lucide-react";
+import CustomDialog from "@/components/CustomDialog";
+import { toast } from "sonner";
 
 export default function ProgramasTable() {
+  const [open, setOpen] = useState<boolean>(false);
   const [programaSelected, setProgramaSelected] = useState<Programa>();
   const [programas, setProgramas] = useState<Programa[]>([]);
 
@@ -18,12 +31,22 @@ export default function ProgramasTable() {
   const refreshProgramas = async () => {
     fetchProgramas();
     setProgramaSelected(undefined);
+    setOpen(false);
   };
 
   const removePrograma = async (programa: Programa) => {
     const response = await deletePrograma(programa);
-    if (response.ok) refreshProgramas();
+    if (response.ok) {
+      refreshProgramas();
+      toast("Programa eliminado correctamente");
+    }
   };
+
+  useEffect(() => {
+    if (!open) {
+      setProgramaSelected(undefined);
+    }
+  }, [open]);
 
   useEffect(() => {
     fetchProgramas();
@@ -35,46 +58,63 @@ export default function ProgramasTable() {
     <div>
       <h1>Programas</h1>
       <div>
-        <ProgramaForm
-          key={programaSelected?.id}
-          programa={programaSelected}
-          onProgramaCreatedOrUpdated={refreshProgramas}
-        />
+        <CustomDialog
+          triggerText={
+            <>
+              <PlusCircle />
+              Añadir programa
+            </>
+          }
+          open={open}
+          setOpen={setOpen}
+        >
+          <ProgramaForm
+            key={programaSelected?.id}
+            programa={programaSelected}
+            onProgramaCreatedOrUpdated={refreshProgramas}
+          />
+        </CustomDialog>
       </div>
-      <table className="table-fixed w-full">
-        <thead>
-          <tr>
-            <th className="text-left">Nombre</th>
-            <th className="text-left">Código del programa</th>
-            <th className="text-left">Universidad</th>
-            <th className="text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table className="table-fixed w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-left">Nombre</TableHead>
+            <TableHead className="text-left">Código del programa</TableHead>
+            <TableHead className="text-left">Universidad</TableHead>
+            <TableHead className="text-left">Acciones</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {programas.map((programa) => (
-            <tr key={programa.id}>
-              <td>{programa.nombre}</td>
-              <td>{programa.codigoPrograma}</td>
-              <td>{programa.universidad.nombre}</td>
-              <td>
-                Acciones
-                <button
-                  onClick={() => setProgramaSelected(programa)}
-                  className="btn btn-primary"
+            <TableRow key={programa.id}>
+              <TableCell>{programa.nombre}</TableCell>
+              <TableCell>{programa.codigoPrograma}</TableCell>
+              <TableCell>{programa.universidad.nombre}</TableCell>
+              <TableCell className="space-x-2">
+                <Button
+                  onClick={() => {
+                    setOpen(true), setProgramaSelected(programa);
+                  }}
                 >
-                  Editar
-                </button>
-                <button
-                  onClick={() => removePrograma(programa)}
-                  className="btn btn-danger"
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
+                  <Edit2 />
+                </Button>
+                <CustomDialog triggerText={<Trash2 color="red" />}>
+                  <p className="my-4">
+                    ¿Está seguro/a que desea eliminar el{" "}
+                    <strong>programa</strong>?
+                  </p>
+                  <Button
+                    onClick={() => removePrograma(programa)}
+                    variant="destructive"
+                  >
+                    Eliminar
+                  </Button>
+                </CustomDialog>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

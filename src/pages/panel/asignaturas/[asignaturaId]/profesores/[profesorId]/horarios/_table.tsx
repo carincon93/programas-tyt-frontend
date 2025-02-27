@@ -3,6 +3,17 @@ import { fetchAsignaturasByProfesorData } from "@/services/profesor.service";
 import { useEffect, useState } from "react";
 import AsignaturaHorarioForm from "./_form";
 import { deleteAsignaturaGrupo } from "@/services/asignatura-grupo.service";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import CustomDialog from "@/components/CustomDialog";
+import { Edit2, PlusCircle, Trash2 } from "lucide-react";
 
 interface HorarioTableProps {
   asignaturaProfesorId: string | undefined;
@@ -13,6 +24,7 @@ export default function HorarioTable({
   asignaturaProfesorId,
   profesorId,
 }: HorarioTableProps) {
+  const [open, setOpen] = useState<boolean>(false);
   const [asignaturaGrupoSelected, setAsignaturaGrupoelected] =
     useState<AsignaturaGrupo>();
 
@@ -30,6 +42,7 @@ export default function HorarioTable({
   const refreshHorario = async () => {
     fetchHorario();
     setAsignaturaGrupoelected(undefined);
+    setOpen(false);
   };
 
   const removeAsignaturaGrupo = async (asignaturaGrupo: AsignaturaGrupo) => {
@@ -48,64 +61,83 @@ export default function HorarioTable({
       <h1>Horario</h1>
       <div>
         {asignaturaProfesorId && (
-          <AsignaturaHorarioForm
-            key={asignaturaGrupoSelected?.id}
-            asignaturaGrupo={asignaturaGrupoSelected}
-            asignaturaProfesorId={+asignaturaProfesorId}
-            onAsignaturaHorarioCreatedOrUpdated={refreshHorario}
-          />
+          <CustomDialog
+            triggerText={
+              <>
+                <PlusCircle />
+                Añadir horario
+              </>
+            }
+            open={open}
+            setOpen={setOpen}
+          >
+            <AsignaturaHorarioForm
+              key={asignaturaGrupoSelected?.id}
+              asignaturaGrupo={asignaturaGrupoSelected}
+              asignaturaProfesorId={+asignaturaProfesorId}
+              onAsignaturaHorarioCreatedOrUpdated={refreshHorario}
+            />
+          </CustomDialog>
         )}
       </div>
-      <table className="table-fixed w-full">
-        <thead>
-          <tr>
-            <th className="text-left">Fecha</th>
-            <th className="text-left">Programa / Grupo</th>
-            <th className="text-left">Hora inicio / Hora fin</th>
-            <th className="text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table className="table-fixed w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-left">Fecha</TableHead>
+            <TableHead className="text-left">Programa / Grupo</TableHead>
+            <TableHead className="text-left">Hora inicio / Hora fin</TableHead>
+            <TableHead className="text-left">Acciones</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {asignaturasProfesor.map((asignaturaProfesor) => (
             <>
               {asignaturaProfesor.horarios.length > 0 ? (
                 asignaturaProfesor.horarios.map((horario) => (
-                  <tr key={horario.id}>
-                    <td>{horario.fecha}</td>
-                    <td>
+                  <TableRow key={horario.id}>
+                    <TableCell>{horario.fecha}</TableCell>
+                    <TableCell>
                       {horario.grupo.programa.nombre} {" / "}
                       {horario.grupo.codigoGrupo}
-                    </td>
-                    <td>
-                      {horario.horaInicio}-{horario.horaFin}
-                    </td>
+                    </TableCell>
+                    <TableCell>
+                      {horario.horaInicio}
+                      {" - "}
+                      {horario.horaFin}
+                    </TableCell>
 
-                    <td>
-                      Acciones
-                      <button
-                        onClick={() => setAsignaturaGrupoelected(horario)}
-                        className="btn btn-primary"
+                    <TableCell className="space-x-2">
+                      <Button
+                        onClick={() => {
+                          setOpen(true), setAsignaturaGrupoelected(horario);
+                        }}
                       >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => removeAsignaturaGrupo(horario)}
-                        className="btn btn-danger"
-                      >
-                        Eliminar
-                      </button>
-                    </td>
-                  </tr>
+                        <Edit2 />
+                      </Button>
+                      <CustomDialog triggerText={<Trash2 color="red" />}>
+                        <p className="my-4">
+                          ¿Está seguro/a que desea eliminar el{" "}
+                          <strong>horario</strong>?
+                        </p>
+                        <Button
+                          onClick={() => removeAsignaturaGrupo(horario)}
+                          variant="destructive"
+                        >
+                          Eliminar
+                        </Button>
+                      </CustomDialog>
+                    </TableCell>
+                  </TableRow>
                 ))
               ) : (
-                <tr>
-                  <td colSpan={4}>No hay datos para mostrar</td>
-                </tr>
+                <TableRow>
+                  <TableCell colSpan={4}>No hay datos para mostrar</TableCell>
+                </TableRow>
               )}
             </>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

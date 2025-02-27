@@ -5,8 +5,21 @@ import {
 } from "@/services/institucion.service";
 import { useEffect, useState } from "react";
 import InstitucionForm from "./_form";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Edit2, PlusCircle, Trash2 } from "lucide-react";
+import CustomDialog from "@/components/CustomDialog";
+import { toast } from "sonner";
 
 export default function InstitucionesTable() {
+  const [open, setOpen] = useState<boolean>(false);
   const [institucionSelected, setInstitucionSelected] = useState<Institucion>();
   const [instituciones, setInstituciones] = useState<Institucion[]>([]);
 
@@ -18,12 +31,22 @@ export default function InstitucionesTable() {
   const refreshInstituciones = async () => {
     fetchInstituciones();
     setInstitucionSelected(undefined);
+    setOpen(false);
   };
 
   const removeInstitucion = async (institucion: Institucion) => {
     const response = await deleteInstitucion(institucion);
-    if (response.ok) refreshInstituciones();
+    if (response.ok) {
+      refreshInstituciones();
+      toast("Institución eliminado correctamente");
+    }
   };
+
+  useEffect(() => {
+    if (!open) {
+      setInstitucionSelected(undefined);
+    }
+  }, [open]);
 
   useEffect(() => {
     fetchInstituciones();
@@ -35,47 +58,64 @@ export default function InstitucionesTable() {
     <div>
       <h1>Instituciones</h1>
       <div>
-        <InstitucionForm
-          key={institucionSelected?.id}
-          institucion={institucionSelected}
-          onInstitucionCreatedOrUpdated={refreshInstituciones}
-        />
+        <CustomDialog
+          triggerText={
+            <>
+              <PlusCircle />
+              Añadir institución
+            </>
+          }
+          open={open}
+          setOpen={setOpen}
+        >
+          <InstitucionForm
+            key={institucionSelected?.id}
+            institucion={institucionSelected}
+            onInstitucionCreatedOrUpdated={refreshInstituciones}
+          />
+        </CustomDialog>
       </div>
 
-      <table className="table-fixed w-full">
-        <thead>
-          <tr>
-            <th className="text-left">Nombre</th>
-            <th className="text-left">Dirección</th>
-            <th className="text-left">Teléfono</th>
-            <th className="text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table className="table-fixed w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-left">Nombre</TableHead>
+            <TableHead className="text-left">Dirección</TableHead>
+            <TableHead className="text-left">Teléfono</TableHead>
+            <TableHead className="text-left">Acciones</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {instituciones.map((institucion) => (
-            <tr key={institucion.id}>
-              <td>{institucion.nombre}</td>
-              <td>{institucion.direccion}</td>
-              <td>{institucion.telefono}</td>
-              <td>
-                Acciones
-                <button
-                  onClick={() => setInstitucionSelected(institucion)}
-                  className="btn btn-primary"
+            <TableRow key={institucion.id}>
+              <TableCell>{institucion.nombre}</TableCell>
+              <TableCell>{institucion.direccion}</TableCell>
+              <TableCell>{institucion.telefono}</TableCell>
+              <TableCell className="space-x-2">
+                <Button
+                  onClick={() => {
+                    setOpen(true), setInstitucionSelected(institucion);
+                  }}
                 >
-                  Editar
-                </button>
-                <button
-                  onClick={() => removeInstitucion(institucion)}
-                  className="btn btn-danger"
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
+                  <Edit2 />
+                </Button>
+                <CustomDialog triggerText={<Trash2 color="red" />}>
+                  <p className="my-4">
+                    ¿Está seguro/a que desea eliminar la{" "}
+                    <strong>institución</strong>?
+                  </p>
+                  <Button
+                    onClick={() => removeInstitucion(institucion)}
+                    variant="destructive"
+                  >
+                    Eliminar
+                  </Button>
+                </CustomDialog>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

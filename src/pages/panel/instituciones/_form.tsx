@@ -3,6 +3,10 @@ import type { Institucion } from "@/lib/types";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Asterisk } from "lucide-react";
 import { createOrUpdateInstitucion } from "@/services/institucion.service";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface InstitucionFormProps {
   institucion?: Institucion;
@@ -37,7 +41,15 @@ export default function InstitucionForm({
 
     const result = await createOrUpdateInstitucion(institucion, formData);
 
-    if (onInstitucionCreatedOrUpdated) onInstitucionCreatedOrUpdated(result);
+    if (onInstitucionCreatedOrUpdated) {
+      onInstitucionCreatedOrUpdated(result);
+    }
+
+    if (result.ok) {
+      toast(
+        `Institución ${institucion?.id ? "editada" : "creada"} correctamente`
+      );
+    }
   };
 
   console.log(institucion);
@@ -45,10 +57,10 @@ export default function InstitucionForm({
   return (
     <form onSubmit={submit} className="space-y-8">
       <fieldset>
-        <label htmlFor="nombre" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="nombre" className="flex items-center gap-1 mb-4">
           Nombre <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="nombre"
           name="nombre"
           type="text"
@@ -59,10 +71,10 @@ export default function InstitucionForm({
       </fieldset>
 
       <fieldset>
-        <label htmlFor="direccion" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="direccion" className="flex items-center gap-1 mb-4">
           Dirección <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="direccion"
           name="direccion"
           type="address"
@@ -73,10 +85,10 @@ export default function InstitucionForm({
       </fieldset>
 
       <fieldset>
-        <label htmlFor="telefono" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="telefono" className="flex items-center gap-1 mb-4">
           Teléfono <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="telefono"
           name="telefono"
           type="text"
@@ -86,9 +98,9 @@ export default function InstitucionForm({
         />
       </fieldset>
 
-      <button type="submit" className="w-full mt-4">
+      <Button type="submit" className="w-full mt-4">
         Guardar
-      </button>
+      </Button>
     </form>
   );
 }

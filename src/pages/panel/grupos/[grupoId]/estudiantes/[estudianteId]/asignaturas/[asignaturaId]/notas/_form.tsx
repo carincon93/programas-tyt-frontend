@@ -3,10 +3,15 @@ import type { Nota } from "@/lib/types";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Asterisk } from "lucide-react";
 import { createOrUpdateNota } from "@/services/nota.service";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface NotaFormProps {
   nota?: Nota;
-  asignaturaId: number;
+  asignaturaProfesorId: number;
   estudianteId: number;
   onNotaCreatedOrUpdated?: (result: {
     ok: boolean;
@@ -17,12 +22,12 @@ interface NotaFormProps {
 
 export default function NotaForm({
   nota,
-  asignaturaId,
+  asignaturaProfesorId,
   estudianteId,
   onNotaCreatedOrUpdated,
 }: NotaFormProps) {
   const [formData, setFormData] = useState<Partial<Nota>>({
-    asignaturaId: nota?.asignaturaId || asignaturaId,
+    asignaturaProfesorId: nota?.asignaturaProfesorId || asignaturaProfesorId,
     estudianteId: nota?.estudianteId || estudianteId,
     nota: nota?.nota || 0,
     fecha: nota?.fecha || "",
@@ -42,16 +47,20 @@ export default function NotaForm({
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!asignaturaId && !estudianteId) return;
+    if (!asignaturaProfesorId && !estudianteId) return;
 
     const result = await createOrUpdateNota(
-      formData.asignaturaId!,
+      formData.asignaturaProfesorId!,
       formData.estudianteId!,
       nota,
       formData
     );
 
-    if (onNotaCreatedOrUpdated) onNotaCreatedOrUpdated(result);
+    if (onNotaCreatedOrUpdated) {
+      onNotaCreatedOrUpdated(result);
+    }
+    if (result.ok)
+      toast(`Nota ${nota?.id ? "editada" : "creada"} correctamente`);
   };
 
   console.log(nota);
@@ -59,10 +68,10 @@ export default function NotaForm({
   return (
     <form onSubmit={submit} className="space-y-8">
       <fieldset>
-        <label htmlFor="nota" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="nota" className="flex items-center gap-1 mb-4">
           Nota <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="nota"
           name="nota"
           type="number"
@@ -74,13 +83,14 @@ export default function NotaForm({
       </fieldset>
 
       <fieldset>
-        <label htmlFor="fecha" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="fecha" className="flex items-center gap-1 mb-4">
           Fecha <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="fecha"
           name="fecha"
           type="date"
+          className="block"
           value={formData.fecha}
           onChange={handleChange}
           required
@@ -88,10 +98,10 @@ export default function NotaForm({
       </fieldset>
 
       <fieldset>
-        <label htmlFor="observacion" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="observacion" className="flex items-center gap-1 mb-4">
           Observación <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <textarea
+        </Label>
+        <Textarea
           id="observacion"
           name="observacion"
           value={formData.observacion}
@@ -100,9 +110,9 @@ export default function NotaForm({
         />
       </fieldset>
 
-      <button type="submit" className="w-full mt-4">
+      <Button type="submit" className="w-full mt-4">
         Guardar
-      </button>
+      </Button>
     </form>
   );
 }

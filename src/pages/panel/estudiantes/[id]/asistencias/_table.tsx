@@ -1,3 +1,11 @@
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { Asistencia, Estudiante } from "@/lib/types";
 import { fetchAsistenciasData } from "@/services/asistencia.service";
 import { fetchEstudianteByIdData } from "@/services/estudiante.service";
@@ -10,6 +18,7 @@ interface AsistenciasTableProps {
 export default function AsistenciasTable({
   estudianteId,
 }: AsistenciasTableProps) {
+  const [open, setOpen] = useState<boolean>(false);
   const [asistencias, setAsistencias] = useState<Asistencia[]>([]);
   const [estudiante, setEstudiante] = useState<Estudiante>();
 
@@ -40,28 +49,28 @@ export default function AsistenciasTable({
         Asistencia estudiante{" "}
         {estudiante?.user.nombres + " " + estudiante?.user.apellidos}
       </h1>
-      <table className="table-fixed w-full">
-        <thead>
-          <tr>
-            <th className="text-left">Asignatura</th>
-            <th className="text-left">Asistencia</th>
-            <th className="text-left">Fecha</th>
-            <th className="text-left">Observación</th>
-            <th className="text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table className="table-fixed w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-left">Asignatura</TableHead>
+            <TableHead className="text-left">Asistencia</TableHead>
+            <TableHead className="text-left">Fecha</TableHead>
+            <TableHead className="text-left">Observación</TableHead>
+            <TableHead className="text-left">Acciones</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {asistencias.map((asistencia) => (
-            <tr key={asistencia.id}>
-              <td>{asistencia.asignatura.nombre}</td>
-              <td>{asistencia.asiste ? "Si" : "No"}</td>
-              <td>{asistencia.fecha}</td>
-              <td>{asistencia.observacion}</td>
-              <td>Acciones</td>
-            </tr>
+            <TableRow key={asistencia.id}>
+              <TableCell>{asistencia.asignaturaProfesor.asignatura.nombre}</TableCell>
+              <TableCell>{asistencia.asiste ? "Si" : "No"}</TableCell>
+              <TableCell>{asistencia.fecha}</TableCell>
+              <TableCell>{asistencia.observacion}</TableCell>
+              <TableCell>Acciones</TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

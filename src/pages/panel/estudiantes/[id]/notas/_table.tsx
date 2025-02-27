@@ -1,5 +1,13 @@
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { Nota } from "@/lib/types";
-import { fetchNotasData } from "@/services/nota.service";
+import { fetchNotasByEstudianteData } from "@/services/nota.service";
 import { useEffect, useState } from "react";
 
 interface NotasTableProps {
@@ -7,12 +15,13 @@ interface NotasTableProps {
 }
 
 export default function NotasTable({ estudianteId }: NotasTableProps) {
+  const [open, setOpen] = useState<boolean>(false);
   const [notas, setNotas] = useState<Nota[]>([]);
 
   const fetchNotas = async () => {
     if (!estudianteId) return;
 
-    const response = await fetchNotasData(+estudianteId);
+    const response = await fetchNotasByEstudianteData(+estudianteId);
     if (response.data) setNotas(response.data);
   };
 
@@ -25,30 +34,30 @@ export default function NotasTable({ estudianteId }: NotasTableProps) {
   return (
     <div>
       <h1>Nota estudiante</h1>
-      <table className="table-fixed w-full">
-        <thead>
-          <tr>
-            <th className="text-left">Nombre</th>
-            <th className="text-left">Asignatura</th>
-            <th className="text-left">Nota</th>
-            <th className="text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table className="table-fixed w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-left">Nombre</TableHead>
+            <TableHead className="text-left">Asignatura</TableHead>
+            <TableHead className="text-left">Nota</TableHead>
+            <TableHead className="text-left">Acciones</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {notas.map((nota) => (
-            <tr key={nota.id}>
-              <td>
+            <TableRow key={nota.id}>
+              <TableCell>
                 {nota.estudiante.user.nombres +
                   " " +
                   nota.estudiante.user.apellidos}
-              </td>
-              <td>{nota.asignatura.nombre}</td>
-              <td>{nota.nota}</td>
-              <td>Acciones</td>
-            </tr>
+              </TableCell>
+              <TableCell>{nota.asignaturaProfesor.asignatura.nombre}</TableCell>
+              <TableCell>{nota.nota}</TableCell>
+              <TableCell>Acciones</TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

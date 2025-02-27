@@ -1,8 +1,21 @@
-import type { Programa } from "@/lib/types";
+import type { Programa, Universidad } from "@/lib/types";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { Asterisk } from "lucide-react";
 import { createOrUpdatePrograma } from "@/services/programa.service";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { fetchUniversidadesData } from "@/services/universidad.service";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
 
 interface ProgramaFormProps {
   programa?: Programa;
@@ -17,6 +30,7 @@ export default function ProgramaForm({
   programa,
   onProgramaCreatedOrUpdated,
 }: ProgramaFormProps) {
+  const [universidades, setUniversidades] = useState<Universidad[]>([]);
   const [formData, setFormData] = useState<Partial<Programa>>({
     nombre: programa?.nombre || "",
     codigoPrograma: programa?.codigoPrograma || "",
@@ -37,18 +51,33 @@ export default function ProgramaForm({
 
     const result = await createOrUpdatePrograma(programa, formData);
 
-    if (onProgramaCreatedOrUpdated) onProgramaCreatedOrUpdated(result);
+    if (onProgramaCreatedOrUpdated) {
+      onProgramaCreatedOrUpdated(result);
+    }
+
+    if (result.ok) {
+      toast(`Programa ${programa?.id ? "editado" : "creado"} correctamente`);
+    }
   };
+
+  const fetchUniversidades = async () => {
+    const response = await fetchUniversidadesData();
+    if (response.data) setUniversidades(response.data);
+  };
+
+  useEffect(() => {
+    fetchUniversidades();
+  }, []);
 
   console.log(programa);
 
   return (
     <form onSubmit={submit} className="space-y-8">
       <fieldset>
-        <label htmlFor="nombre" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="nombre" className="flex items-center gap-1 mb-4">
           Nombre <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="nombre"
           name="nombre"
           type="text"
@@ -59,13 +88,13 @@ export default function ProgramaForm({
       </fieldset>
 
       <fieldset>
-        <label
+        <Label
           htmlFor="codigoPrograma"
           className="flex items-center gap-1 mb-4"
         >
           Código del programa <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="codigoPrograma"
           name="codigoPrograma"
           type="text"
@@ -76,22 +105,37 @@ export default function ProgramaForm({
       </fieldset>
 
       <fieldset>
-        <label htmlFor="universidadId" className="flex items-center gap-1 mb-4">
-          Universidad Id <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
-          id="universidadId"
+        <Label htmlFor="universidadId" className="flex items-center gap-1 mb-4">
+          Universidad <Asterisk size={12} strokeWidth={1} />
+        </Label>
+        <Select
           name="universidadId"
-          type="text"
-          value={formData.universidadId}
-          onChange={handleChange}
-          required
-        />
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, universidadId: +value }))
+          }
+          defaultValue={formData.universidadId?.toString()}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Seleccione una opción" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {universidades.map((Universidad) => (
+                <SelectItem
+                  key={Universidad.id}
+                  value={Universidad.id.toString()}
+                >
+                  {Universidad.nombre}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </fieldset>
 
-      <button type="submit" className="w-full mt-4">
+      <Button type="submit" className="w-full mt-4">
         Guardar
-      </button>
+      </Button>
     </form>
   );
 }

@@ -1,16 +1,15 @@
 import { URL_BACKEND } from "astro:env/client";
-// import { clsx, type ClassValue } from "clsx";
-// import Cookies from "js-cookie";
-// import { twMerge } from "tailwind-merge";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
-// export function cn(...inputs: ClassValue[]) {
-//   return twMerge(clsx(inputs));
-// }
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 export const fetchWithAuth = async <T>(
   endpoint: string,
   method: "POST" | "PATCH" | "DELETE" | "GET",
-  body?: BodyInit | null | undefined | Partial<T>
+  body?: BodyInit | null | undefined | number[] | Partial<T>
 ): Promise<{ ok: boolean; data?: T; success?: string; error?: string }> => {
   //   const cookie = Cookies.get("__session");
 

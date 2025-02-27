@@ -1,8 +1,21 @@
-import type { Profesor } from "@/lib/types";
+import type { Profesor, Universidad } from "@/lib/types";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { Asterisk } from "lucide-react";
 import { createOrUpdateProfesor } from "@/services/profesor.service";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { fetchUniversidadesData } from "@/services/universidad.service";
+import { toast } from "sonner";
 
 interface ProfesorFormProps {
   profesor?: Profesor;
@@ -17,6 +30,7 @@ export default function ProfesorForm({
   profesor,
   onProfesorCreatedOrUpdated,
 }: ProfesorFormProps) {
+  const [universidades, setUniversidades] = useState<Universidad[]>([]);
   const [formData, setFormData] = useState<Partial<Profesor>>({
     user: {
       id: profesor?.user.id || undefined,
@@ -48,18 +62,33 @@ export default function ProfesorForm({
 
     const result = await createOrUpdateProfesor(profesor, formData);
 
-    if (onProfesorCreatedOrUpdated) onProfesorCreatedOrUpdated(result);
+    if (onProfesorCreatedOrUpdated) {
+      onProfesorCreatedOrUpdated(result);
+    }
+
+    if (result.ok) {
+      toast(`Profesor ${profesor?.id ? "editado" : "creado"} correctamente`);
+    }
   };
+
+  const fetchUniversidades = async () => {
+    const response = await fetchUniversidadesData();
+    if (response.data) setUniversidades(response.data);
+  };
+
+  useEffect(() => {
+    fetchUniversidades();
+  }, []);
 
   console.log(profesor);
 
   return (
-    <form onSubmit={submit} className="space-y-8">
+    <form onSubmit={submit} className="space-y-8 space-x-4 grid grid-cols-2">
       <fieldset>
-        <label htmlFor="nombres" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="nombres" className="flex items-center gap-1 mb-4">
           Nombres <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="nombres"
           name="nombres"
           type="text"
@@ -69,10 +98,10 @@ export default function ProfesorForm({
         />
       </fieldset>
       <fieldset>
-        <label htmlFor="apellidos" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="apellidos" className="flex items-center gap-1 mb-4">
           Apellidos <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="apellidos"
           name="apellidos"
           type="text"
@@ -83,10 +112,10 @@ export default function ProfesorForm({
       </fieldset>
 
       <fieldset>
-        <label htmlFor="correo" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="correo" className="flex items-center gap-1 mb-4">
           Correo electrónico <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="correo"
           name="correo"
           type="email"
@@ -97,10 +126,10 @@ export default function ProfesorForm({
       </fieldset>
 
       <fieldset>
-        <label htmlFor="direccion" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="direccion" className="flex items-center gap-1 mb-4">
           Direccion <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="direccion"
           name="direccion"
           type="address"
@@ -111,27 +140,43 @@ export default function ProfesorForm({
       </fieldset>
 
       <fieldset>
-        <label htmlFor="tipoDocumento" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="tipoDocumento" className="flex items-center gap-1 mb-4">
           Tipo de documento <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
-          id="tipoDocumento"
+        </Label>
+        <Select
           name="tipoDocumento"
-          type="text"
-          value={formData.user?.tipoDocumento}
-          onChange={handleChange}
-          required
-        />
+          onValueChange={(value) =>
+            setFormData((prev) => ({
+              ...prev,
+              user: {
+                ...prev.user,
+                tipoDocumento: value,
+              },
+            }))
+          }
+          defaultValue={formData.user?.tipoDocumento}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Seleccione una opción" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="cc">Cédula de ciudadanía</SelectItem>
+              <SelectItem value="ce">Cédula de extranjería</SelectItem>
+              <SelectItem value="ti">Tarjeta de identidad</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </fieldset>
 
       <fieldset>
-        <label
+        <Label
           htmlFor="numeroDocumento"
           className="flex items-center gap-1 mb-4"
         >
           Número de documento <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="numeroDocumento"
           name="numeroDocumento"
           type="number"
@@ -142,10 +187,10 @@ export default function ProfesorForm({
       </fieldset>
 
       <fieldset>
-        <label htmlFor="telefono" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="telefono" className="flex items-center gap-1 mb-4">
           Teléfono <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="telefono"
           name="telefono"
           type="number"
@@ -156,24 +201,40 @@ export default function ProfesorForm({
       </fieldset>
 
       <fieldset>
-        <label htmlFor="universidadId" className="flex items-center gap-1 mb-4">
-          Universidad Id <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
-          id="universidadId"
+        <Label htmlFor="universidadId" className="flex items-center gap-1 mb-4">
+          Universidad <Asterisk size={12} strokeWidth={1} />
+        </Label>
+
+        <Select
           name="universidadId"
-          type="number"
-          value={formData.universidadId}
-          onChange={(e) =>
-            setFormData((prev) => ({ ...prev, universidadId: +e.target.value }))
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, universidadId: +value }))
           }
-          required
-        />
+          defaultValue={formData.universidadId?.toString()}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Seleccione una opción" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {universidades.map((Universidad) => (
+                <SelectItem
+                  key={Universidad.id}
+                  value={Universidad.id.toString()}
+                >
+                  {Universidad.nombre}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </fieldset>
 
-      <button type="submit" className="w-full mt-4">
-        Guardar
-      </button>
+      <div className="col-span-2">
+        <Button type="submit" className="w-full mt-4">
+          Guardar
+        </Button>
+      </div>
     </form>
   );
 }

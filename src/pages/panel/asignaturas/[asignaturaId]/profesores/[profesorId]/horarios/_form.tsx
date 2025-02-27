@@ -2,11 +2,25 @@ import type {
   Asignatura,
   AsignaturaProfesor,
   AsignaturaGrupo,
+  Grupo,
 } from "@/lib/types";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { Asterisk } from "lucide-react";
 import { createOrUpdateAsignaturaGrupo } from "@/services/asignatura-grupo.service";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { fetchGruposData } from "@/services/grupo.service";
+import { toast } from "sonner";
 
 interface AsignaturaHorarioFormProps {
   asignaturaProfesorId?: number;
@@ -23,6 +37,7 @@ export default function AsignaturaHorarioForm({
   asignaturaGrupo,
   onAsignaturaHorarioCreatedOrUpdated,
 }: AsignaturaHorarioFormProps) {
+  const [grupos, setGrupos] = useState<Grupo[]>([]);
   const [formData, setFormData] = useState<Partial<AsignaturaGrupo>>({
     fecha: asignaturaGrupo?.fecha || "",
     grupoId: asignaturaGrupo?.grupoId || undefined,
@@ -48,20 +63,37 @@ export default function AsignaturaHorarioForm({
       formData
     );
 
-    if (onAsignaturaHorarioCreatedOrUpdated)
+    if (onAsignaturaHorarioCreatedOrUpdated) {
       onAsignaturaHorarioCreatedOrUpdated(result);
+    }
+
+    if (result.ok) {
+      toast(
+        `Asignatura ${asignaturaGrupo?.id ? "editada" : "creada"} correctamente`
+      );
+    }
   };
+
+  const fetchGrupos = async () => {
+    const response = await fetchGruposData();
+    if (response.data) setGrupos(response.data);
+  };
+
+  useEffect(() => {
+    fetchGrupos();
+  }, []);
 
   return (
     <form onSubmit={submit} className="space-y-8">
       <fieldset>
-        <label htmlFor="fecha" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="fecha" className="flex items-center gap-1 mb-4">
           Fecha <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="fecha"
           name="fecha"
           type="date"
+          className="block"
           value={formData.fecha}
           onChange={handleChange}
           required
@@ -69,10 +101,10 @@ export default function AsignaturaHorarioForm({
       </fieldset>
 
       <fieldset>
-        <label htmlFor="horaInicio" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="horaInicio" className="flex items-center gap-1 mb-4">
           Hora inicio <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="horaInicio"
           name="horaInicio"
           type="time"
@@ -83,10 +115,10 @@ export default function AsignaturaHorarioForm({
       </fieldset>
 
       <fieldset>
-        <label htmlFor="horaFin" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="horaFin" className="flex items-center gap-1 mb-4">
           Hora inicio <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="horaFin"
           name="horaFin"
           type="time"
@@ -97,22 +129,37 @@ export default function AsignaturaHorarioForm({
       </fieldset>
 
       <fieldset>
-        <label htmlFor="grupoId" className="flex items-center gap-1 mb-4">
-          Grupo Id <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
-          id="grupoId"
+        <Label htmlFor="grupoId" className="flex items-center gap-1 mb-4">
+          Grupo <Asterisk size={12} strokeWidth={1} />
+        </Label>
+
+        <Select
           name="grupoId"
-          type="text"
-          value={formData.grupoId}
-          onChange={handleChange}
-          required
-        />
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, grupoId: +value }))
+          }
+          defaultValue={formData.grupoId?.toString()}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Seleccione una opción" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {grupos.map((grupo) => (
+                <SelectItem key={grupo.id} value={grupo.id.toString()}>
+                  {grupo.codigoGrupo}
+                  {" / "}
+                  {grupo.programa.nombre}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </fieldset>
 
-      <button type="submit" className="w-full mt-4">
+      <Button type="submit" className="w-full mt-4">
         Guardar
-      </button>
+      </Button>
     </form>
   );
 }

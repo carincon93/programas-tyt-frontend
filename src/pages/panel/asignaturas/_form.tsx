@@ -3,6 +3,10 @@ import type { Asignatura } from "@/lib/types";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Asterisk } from "lucide-react";
 import { createOrUpdateAsignatura } from "@/services/asignatura.service";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 interface AsignaturaFormProps {
   asignatura?: Asignatura;
@@ -36,7 +40,14 @@ export default function AsignaturaForm({
 
     const result = await createOrUpdateAsignatura(asignatura, formData);
 
-    if (onAsignaturaCreatedOrUpdated) onAsignaturaCreatedOrUpdated(result);
+    if (onAsignaturaCreatedOrUpdated) {
+      onAsignaturaCreatedOrUpdated(result);
+    }
+    if (result.ok) {
+      toast(
+        `Asignatura ${asignatura?.id ? "editada" : "creada"} correctamente`
+      );
+    }
   };
 
   console.log(asignatura);
@@ -44,10 +55,10 @@ export default function AsignaturaForm({
   return (
     <form onSubmit={submit} className="space-y-8">
       <fieldset>
-        <label htmlFor="nombre" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="nombre" className="flex items-center gap-1 mb-4">
           Nombre <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="nombre"
           name="nombre"
           type="text"
@@ -58,13 +69,13 @@ export default function AsignaturaForm({
       </fieldset>
 
       <fieldset>
-        <label
+        <Label
           htmlFor="codigoAsignatura"
           className="flex items-center gap-1 mb-4"
         >
           Código de la asignatura <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="codigoAsignatura"
           name="codigoAsignatura"
           type="text"
@@ -74,9 +85,9 @@ export default function AsignaturaForm({
         />
       </fieldset>
 
-      <button type="submit" className="w-full mt-4">
+      <Button type="submit" className="w-full mt-4">
         Guardar
-      </button>
+      </Button>
     </form>
   );
 }

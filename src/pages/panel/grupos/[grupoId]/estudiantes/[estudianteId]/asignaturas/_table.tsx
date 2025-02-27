@@ -1,3 +1,11 @@
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { AsignaturaGrupo, Estudiante } from "@/lib/types";
 import { fetchAsignaturaGrupoByEstudianteData } from "@/services/asignatura-grupo.service";
 import { fetchEstudianteByIdData } from "@/services/estudiante.service";
@@ -36,44 +44,52 @@ export default function EstudianteAsignaturasTable({
     fetchEstudianteById();
   }, []);
 
+  console.log(asignaturasGrupo);
+
   return (
     <div>
       <h1 className="uppercase">{estudiante?.user.nombres}</h1>
 
-      <table className="table-fixed w-full">
-        <thead>
-          <tr>
-            <th className="text-left">Asignatura</th>
-            <th className="text-left">Fecha</th>
-            <th className="text-left">Hora inicio / Hora fin</th>
-            <th className="text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table className="table-fixed w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-left">Asignatura</TableHead>
+            <TableHead className="text-left">Profesor</TableHead>
+            <TableHead className="text-left">Fecha</TableHead>
+            <TableHead className="text-left">Hora inicio / Hora fin</TableHead>
+            <TableHead className="text-left">Acciones</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {asignaturasGrupo.map((asignaturaGrupo) => (
-            <tr>
-              <td>{asignaturaGrupo.asignaturaProfesor.asignatura.nombre}</td>
-              <td>{asignaturaGrupo.fecha}</td>
-              <td>
+            <TableRow key={asignaturaGrupo.id}>
+              <TableCell>
+                {asignaturaGrupo.asignaturaProfesor.asignatura.nombre}
+              </TableCell>
+              <TableCell>
+                {asignaturaGrupo.asignaturaProfesor.profesor.user.nombres}{" "}
+                {asignaturaGrupo.asignaturaProfesor.profesor.user.apellidos}
+              </TableCell>
+              <TableCell>{asignaturaGrupo.fecha}</TableCell>
+              <TableCell>
                 {asignaturaGrupo.horaInicio + " - " + asignaturaGrupo.horaFin}
-              </td>
-              <td>
-                Acciones
+              </TableCell>
+              <TableCell>
                 <a
-                  href={`/panel/grupos/${grupoId}/estudiantes/${estudiante?.id}/asignaturas/${asignaturaGrupo.asignaturaProfesor.asignatura.id}/notas`}
+                  href={`/panel/grupos/${grupoId}/estudiantes/${estudiante?.id}/asignaturas/${asignaturaGrupo.asignaturaProfesor.id}/notas`}
                 >
                   Notas
                 </a>
                 <a
-                  href={`/panel/grupos/${grupoId}/estudiantes/${estudiante?.id}/asignaturas/${asignaturaGrupo.asignaturaProfesor.asignatura.id}/asistencias`}
+                  href={`/panel/grupos/${grupoId}/estudiantes/${estudiante?.id}/asignaturas/${asignaturaGrupo.asignaturaProfesor.id}/asistencias`}
                 >
                   Asistencias
                 </a>
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

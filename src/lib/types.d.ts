@@ -1,5 +1,5 @@
 export interface User {
-  id: number | undefined;
+  id: number;
   nombres: string;
   apellidos: string;
   correo: string;
@@ -29,7 +29,7 @@ export interface Grupo {
   programaId: number;
 
   programa: Programa;
-  estudianteGrupos: EstudianteGrupo[];
+  estudiantes: Estudiante[];
 }
 
 export interface Profesor {
@@ -37,24 +37,19 @@ export interface Profesor {
   universidadId: number;
 
   universidad: Universidad;
-  user: User;
+  user: Partial<User>;
 }
 
 export interface Estudiante {
   id: number;
   codigoEstudiante: string;
   institucionId: number;
+  userId: number;
+  grupoId: number;
 
   institucion: Institucion;
-  user: User;
-  estudianteGrupos: EstudianteGrupo[];
-}
-
-export interface EstudianteGrupo {
-  id: number;
-
-  estudiante: Estudiante;
-  grupo: Grupo;
+  user: Partial<User>;
+  grupo: Partial<Grupo>;
 }
 
 export interface Asignatura {
@@ -102,9 +97,9 @@ export interface Nota {
   fecha: string;
   observacion: string;
   estudianteId: number;
-  asignaturaId: number;
+  asignaturaProfesorId: number;
   estudiante: Estudiante;
-  asignatura: Asignatura;
+  asignaturaProfesor: AsignaturaProfesor;
 }
 
 export interface Asistencia {
@@ -113,7 +108,7 @@ export interface Asistencia {
   fecha: string;
   observacion: string;
   estudianteId: number;
-  asignaturaId: number;
+  asignaturaProfesorId: number;
   estudiante: Estudiante;
-  asignatura: Asignatura;
+  asignaturaProfesor: AsignaturaProfesor;
 }

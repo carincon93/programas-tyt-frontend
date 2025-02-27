@@ -1,8 +1,21 @@
-import type { Grupo } from "@/lib/types";
+import type { Grupo, Programa } from "@/lib/types";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { Asterisk } from "lucide-react";
 import { createOrUpdateGrupo } from "@/services/grupo.service";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { fetchProgramasData } from "@/services/programa.service";
 
 interface GrupoFormProps {
   grupo?: Grupo;
@@ -17,6 +30,7 @@ export default function GrupoForm({
   grupo,
   onGrupoCreatedOrUpdated,
 }: GrupoFormProps) {
+  const [programas, setProgramas] = useState<Programa[]>([])
   const [formData, setFormData] = useState<Partial<Grupo>>({
     codigoGrupo: grupo?.codigoGrupo || "",
     programaId: grupo?.programaId || undefined,
@@ -36,32 +50,60 @@ export default function GrupoForm({
 
     const result = await createOrUpdateGrupo(grupo, formData);
 
-    if (onGrupoCreatedOrUpdated) onGrupoCreatedOrUpdated(result);
+    if (onGrupoCreatedOrUpdated) {
+      onGrupoCreatedOrUpdated(result);
+    }
+
+    if (result.ok) {
+      toast(`Grupo ${grupo?.id ? "editado" : "creado"} correctamente`);
+    }
   };
+
+  const fetchProgramas = async () => {
+    const response = await fetchProgramasData()
+    if (response.data) setProgramas(response.data)
+  }
+
+  useEffect(() => {
+    fetchProgramas();
+  }, [])
 
   console.log(grupo);
 
   return (
     <form onSubmit={submit} className="space-y-8">
       <fieldset>
-        <label htmlFor="programaId" className="flex items-center gap-1 mb-4">
-          programa id <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
-          id="programaId"
+        <Label htmlFor="programaId" className="flex items-center gap-1 mb-4">
+          Programa <Asterisk size={12} strokeWidth={1} />
+        </Label>
+
+        <Select
           name="programaId"
-          type="text"
-          value={formData.programaId}
-          onChange={handleChange}
-          required
-        />
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, programaId: +value }))
+          }
+          defaultValue={formData.programaId?.toString()}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Seleccione una opción" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {programas.map((programa) => (
+                <SelectItem key={programa.id} value={programa.id.toString()}>
+                  {programa.nombre}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </fieldset>
 
       <fieldset>
-        <label htmlFor="codigoGrupo" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="codigoGrupo" className="flex items-center gap-1 mb-4">
           Código del grupo <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="codigoGrupo"
           name="codigoGrupo"
           type="text"
@@ -71,9 +113,9 @@ export default function GrupoForm({
         />
       </fieldset>
 
-      <button type="submit" className="w-full mt-4">
+      <Button type="submit" className="w-full mt-4">
         Guardar
-      </button>
+      </Button>
     </form>
   );
 }

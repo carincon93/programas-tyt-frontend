@@ -6,16 +6,29 @@ import {
 import { fetchEstudianteByIdData } from "@/services/estudiante.service";
 import { useEffect, useState } from "react";
 import NotaForm from "./_form";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Edit2, PlusCircle, Trash2 } from "lucide-react";
+import CustomDialog from "@/components/CustomDialog";
+import { toast } from "sonner";
 
 interface EstudianteNotasTableProps {
-  asignaturaId: string | undefined;
+  asignaturaProfesorId: string | undefined;
   estudianteId: string | undefined;
 }
 
 export default function EstudianteNotasTable({
-  asignaturaId,
+  asignaturaProfesorId,
   estudianteId,
 }: EstudianteNotasTableProps) {
+  const [open, setOpen] = useState<boolean>(false);
   const [notaSelected, setNotaSelected] = useState<Nota>();
   const [notas, setNotas] = useState<Nota[]>([]);
   const [estudiante, setEstudiante] = useState<Estudiante>();
@@ -37,12 +50,22 @@ export default function EstudianteNotasTable({
   const refreshNotas = async () => {
     fetchNotasByEstudiante();
     setNotaSelected(undefined);
+    setOpen(false);
   };
 
   const removeNota = async (nota: Nota) => {
     const response = await deleteNota(nota);
-    if (response.ok) refreshNotas();
+    if (response.ok) {
+      refreshNotas();
+      toast("Nota eliminada correctamente");
+    }
   };
+
+  useEffect(() => {
+    if (!open) {
+      setNotaSelected(undefined);
+    }
+  }, [open]);
 
   useEffect(() => {
     fetchNotasByEstudiante();
@@ -55,52 +78,68 @@ export default function EstudianteNotasTable({
     <div>
       <h1 className="uppercase">{estudiante?.user.nombres}</h1>
       <div>
-        {estudianteId && asignaturaId && (
-          <NotaForm
-            key={notaSelected?.id}
-            nota={notaSelected}
-            estudianteId={+estudianteId}
-            asignaturaId={+asignaturaId}
-            onNotaCreatedOrUpdated={refreshNotas}
-          />
+        {estudianteId && asignaturaProfesorId && (
+          <CustomDialog
+            triggerText={
+              <>
+                <PlusCircle />
+                Añadir nota
+              </>
+            }
+            open={open}
+            setOpen={setOpen}
+          >
+            <NotaForm
+              key={notaSelected?.id}
+              nota={notaSelected}
+              estudianteId={+estudianteId}
+              asignaturaProfesorId={+asignaturaProfesorId}
+              onNotaCreatedOrUpdated={refreshNotas}
+            />
+          </CustomDialog>
         )}
       </div>
-      <table className="table-fixed w-full">
-        <thead>
-          <tr>
-            <th className="text-left">Asignatura</th>
-            <th className="text-left">Nota</th>
-            <th className="text-left">Fecha</th>
-            <th className="text-left">Observación</th>
-            <th className="text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table className="table-fixed w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-left">Asignatura</TableHead>
+            <TableHead className="text-left">Nota</TableHead>
+            <TableHead className="text-left">Fecha</TableHead>
+            <TableHead className="text-left">Observación</TableHead>
+            <TableHead className="text-left">Acciones</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {notas.map((nota) => (
-            <tr>
-              <td>{nota.asignatura.nombre}</td>
-              <td>{nota.nota}</td>
-              <td>{nota.fecha}</td>
-              <td>{nota.observacion}</td>
-              <td>
-                Acciones
-                <button
-                  onClick={() => setNotaSelected(nota)}
-                  className="btn btn-primary"
+            <TableRow key={nota.id}>
+              <TableCell>{nota.asignaturaProfesor.asignatura.nombre}</TableCell>
+              <TableCell>{nota.nota}</TableCell>
+              <TableCell>{nota.fecha}</TableCell>
+              <TableCell>{nota.observacion}</TableCell>
+              <TableCell className="space-x-2">
+                <Button
+                  onClick={() => {
+                    setOpen(true), setNotaSelected(nota);
+                  }}
                 >
-                  Editar
-                </button>
-                <button
-                  onClick={() => removeNota(nota)}
-                  className="btn btn-danger"
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
+                  <Edit2 />
+                </Button>
+                <CustomDialog triggerText={<Trash2 color="red" />}>
+                  <p className="my-4">
+                    ¿Está seguro/a que desea eliminar la <strong>nota</strong>?
+                  </p>
+                  <Button
+                    onClick={() => removeNota(nota)}
+                    variant="destructive"
+                  >
+                    Eliminar
+                  </Button>
+                </CustomDialog>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

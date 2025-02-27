@@ -5,8 +5,22 @@ import {
 } from "@/services/asignatura.service";
 import { useEffect, useState } from "react";
 import AsignaturaForm from "./_form";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Edit2, PlusCircle, Trash2 } from "lucide-react";
+import CustomDialog from "@/components/CustomDialog";
+import AsignaturaProfesoresForm from "./_form-profesores";
+import { toast } from "sonner";
 
 export default function AsignaturasTable() {
+  const [open, setOpen] = useState<boolean>(false);
   const [asignaturaSelected, setAsignaturaSelected] = useState<Asignatura>();
   const [asignaturas, setAsignaturas] = useState<Asignatura[]>([]);
 
@@ -18,12 +32,22 @@ export default function AsignaturasTable() {
   const refreshAsignaturas = async () => {
     fetchAsignaturas();
     setAsignaturaSelected(undefined);
+    setOpen(false);
   };
 
   const removeAsignatura = async (asignatura: Asignatura) => {
     const response = await deleteAsignatura(asignatura);
-    if (response.ok) refreshAsignaturas();
+    if (response.ok) {
+      refreshAsignaturas();
+      toast("Asignatura eliminada correctamente");
+    }
   };
+
+  useEffect(() => {
+    if (!open) {
+      setAsignaturaSelected(undefined);
+    }
+  }, [open]);
 
   useEffect(() => {
     fetchAsignaturas();
@@ -35,27 +59,38 @@ export default function AsignaturasTable() {
     <div>
       <h1>Asignaturas</h1>
       <div>
-        <AsignaturaForm
-          key={asignaturaSelected?.id}
-          asignatura={asignaturaSelected}
-          onAsignaturaCreatedOrUpdated={refreshAsignaturas}
-        />
+        <CustomDialog
+          triggerText={
+            <>
+              <PlusCircle />
+              Añadir asignatura
+            </>
+          }
+          open={open}
+          setOpen={setOpen}
+        >
+          <AsignaturaForm
+            key={asignaturaSelected?.id}
+            asignatura={asignaturaSelected}
+            onAsignaturaCreatedOrUpdated={refreshAsignaturas}
+          />
+        </CustomDialog>
       </div>
-      <table className="table-fixed w-full">
-        <thead>
-          <tr>
-            <th className="text-left">Código</th>
-            <th className="text-left">Nombre</th>
-            <th className="text-left">Profesores</th>
-            <th className="text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table className="table-fixed w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-left">Código</TableHead>
+            <TableHead className="text-left">Nombre</TableHead>
+            <TableHead className="text-left">Profesores</TableHead>
+            <TableHead className="text-left">Acciones</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {asignaturas.map((asignatura) => (
-            <tr key={asignatura.id}>
-              <td>{asignatura.codigoAsignatura}</td>
-              <td>{asignatura.nombre}</td>
-              <td>
+            <TableRow key={asignatura.id}>
+              <TableCell>{asignatura.codigoAsignatura}</TableCell>
+              <TableCell>{asignatura.nombre}</TableCell>
+              <TableCell>
                 {asignatura.asignaturaProfesores.map((asignaturaProfesor) => (
                   <div key={asignaturaProfesor.id}>
                     {asignaturaProfesor.profesor.user?.nombres}{" "}
@@ -67,26 +102,41 @@ export default function AsignaturasTable() {
                     </a>
                   </div>
                 ))}
-              </td>
-              <td>
-                <button
-                  onClick={() => setAsignaturaSelected(asignatura)}
-                  className="btn btn-primary"
+                <CustomDialog
+                  triggerText="Profesores"
+                  title="Asignar profesores"
                 >
-                  Editar
-                </button>
-                <button
-                  onClick={() => removeAsignatura(asignatura)}
-                  className="btn btn-danger"
+                  <AsignaturaProfesoresForm
+                    asignatura={asignatura}
+                    onAsignaturaProfesoresCreatedOrUpdated={refreshAsignaturas}
+                  />
+                </CustomDialog>
+              </TableCell>
+              <TableCell className="space-x-2">
+                <Button
+                  onClick={() => {
+                    setOpen(true), setAsignaturaSelected(asignatura);
+                  }}
                 >
-                  Eliminar
-                </button>
-                Acciones
-              </td>
-            </tr>
+                  <Edit2 />
+                </Button>
+                <CustomDialog triggerText={<Trash2 color="red" />}>
+                  <p className="my-4">
+                    ¿Está seguro/a que desea eliminar la{" "}
+                    <strong>asignatura</strong>?
+                  </p>
+                  <Button
+                    onClick={() => removeAsignatura(asignatura)}
+                    variant="destructive"
+                  >
+                    Eliminar
+                  </Button>
+                </CustomDialog>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

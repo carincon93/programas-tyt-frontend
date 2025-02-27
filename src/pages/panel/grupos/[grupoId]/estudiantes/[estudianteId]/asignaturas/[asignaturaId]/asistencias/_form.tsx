@@ -3,10 +3,24 @@ import type { Asistencia } from "@/lib/types";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Asterisk } from "lucide-react";
 import { createOrUpdateAsistencia } from "@/services/asistencia.service";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface AsistenciaFormProps {
   asistencia?: Asistencia;
-  asignaturaId: number;
+  asignaturaProfesorId: number;
   estudianteId: number;
   onAsistenciaCreatedOrUpdated?: (result: {
     ok: boolean;
@@ -17,12 +31,13 @@ interface AsistenciaFormProps {
 
 export default function AsistenciaForm({
   asistencia,
-  asignaturaId,
+  asignaturaProfesorId,
   estudianteId,
   onAsistenciaCreatedOrUpdated,
 }: AsistenciaFormProps) {
   const [formData, setFormData] = useState<Partial<Asistencia>>({
-    asignaturaId: asistencia?.asignaturaId || asignaturaId,
+    asignaturaProfesorId:
+      asistencia?.asignaturaProfesorId || asignaturaProfesorId,
     estudianteId: asistencia?.estudianteId || estudianteId,
     asiste: asistencia?.asiste || undefined,
     fecha: asistencia?.fecha || "",
@@ -34,8 +49,6 @@ export default function AsistenciaForm({
   ) => {
     const { name, value } = e.target;
 
-    console.log(value);
-
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -44,16 +57,24 @@ export default function AsistenciaForm({
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!asignaturaId && !estudianteId) return;
+    if (!asignaturaProfesorId && !estudianteId) return;
 
     const result = await createOrUpdateAsistencia(
-      formData.asignaturaId!,
+      formData.asignaturaProfesorId!,
       formData.estudianteId!,
       asistencia,
       formData
     );
 
-    if (onAsistenciaCreatedOrUpdated) onAsistenciaCreatedOrUpdated(result);
+    if (onAsistenciaCreatedOrUpdated) {
+      onAsistenciaCreatedOrUpdated(result);
+    }
+
+    if (result.ok) {
+      toast(
+        `Asistencia ${asistencia?.id ? "editada" : "creada"} correctamente`
+      );
+    }
   };
 
   console.log("asistencia", asistencia);
@@ -61,29 +82,40 @@ export default function AsistenciaForm({
   return (
     <form onSubmit={submit} className="space-y-8">
       <fieldset>
-        <label htmlFor="asistencia" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="asistencia" className="flex items-center gap-1 mb-4">
           ¿Asistió? <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <select
+        </Label>
+        <Select
           name="asiste"
-          onChange={handleChange}
+          onValueChange={(value) =>
+            setFormData((prev) => ({
+              ...prev,
+              asiste: value === "true",
+            }))
+          }
           defaultValue={asistencia?.asiste ? "true" : "false"}
-          title="¿Asistió?"
         >
-          <option value="">Seleccione una opción</option>
-          <option value="true">Si</option>
-          <option value="false">No</option>
-        </select>
+          <SelectTrigger>
+            <SelectValue placeholder="Seleccione una opción" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="true">Si</SelectItem>
+              <SelectItem value="false">No</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </fieldset>
 
       <fieldset>
-        <label htmlFor="fecha" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="fecha" className="flex items-center gap-1 mb-4">
           Fecha <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <input
+        </Label>
+        <Input
           id="fecha"
           name="fecha"
           type="date"
+          className="block"
           value={formData.fecha}
           onChange={handleChange}
           required
@@ -91,10 +123,10 @@ export default function AsistenciaForm({
       </fieldset>
 
       <fieldset>
-        <label htmlFor="observacion" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="observacion" className="flex items-center gap-1 mb-4">
           Observación <Asterisk size={12} strokeWidth={1} />
-        </label>
-        <textarea
+        </Label>
+        <Textarea
           id="observacion"
           name="observacion"
           value={formData.observacion}
@@ -103,9 +135,9 @@ export default function AsistenciaForm({
         />
       </fieldset>
 
-      <button type="submit" className="w-full mt-4">
+      <Button type="submit" className="w-full mt-4">
         Guardar
-      </button>
+      </Button>
     </form>
   );
 }

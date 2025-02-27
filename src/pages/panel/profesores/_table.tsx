@@ -5,8 +5,21 @@ import {
 } from "@/services/profesor.service";
 import { useEffect, useState } from "react";
 import ProfesorForm from "./_form";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Edit2, PlusCircle, Trash2 } from "lucide-react";
+import CustomDialog from "@/components/CustomDialog";
+import { toast } from "sonner";
 
 export default function ProfesoresTable() {
+  const [open, setOpen] = useState<boolean>(false);
   const [profesorSelected, setProfesorSelected] = useState<Profesor>();
   const [profesores, setProfesores] = useState<Profesor[]>([]);
 
@@ -18,12 +31,22 @@ export default function ProfesoresTable() {
   const refreshProfesores = async () => {
     fetchProfesores();
     setProfesorSelected(undefined);
+    setOpen(false);
   };
 
   const removeProfesor = async (profesor: Profesor) => {
     const response = await deleteProfesor(profesor);
-    if (response.ok) refreshProfesores();
+    if (response.ok) {
+      refreshProfesores();
+      toast("Profesor eliminado correctamente");
+    }
   };
+
+  useEffect(() => {
+    if (!open) {
+      setProfesorSelected(undefined);
+    }
+  }, [open]);
 
   useEffect(() => {
     fetchProfesores();
@@ -35,45 +58,64 @@ export default function ProfesoresTable() {
     <div>
       <h1>Profesores</h1>
       <div>
-        <ProfesorForm
-          key={profesorSelected?.id}
-          profesor={profesorSelected}
-          onProfesorCreatedOrUpdated={refreshProfesores}
-        />
+        <CustomDialog
+          triggerText={
+            <>
+              <PlusCircle />
+              Añadir profesor
+            </>
+          }
+          open={open}
+          setOpen={setOpen}
+        >
+          <ProfesorForm
+            key={profesorSelected?.id}
+            profesor={profesorSelected}
+            onProfesorCreatedOrUpdated={refreshProfesores}
+          />
+        </CustomDialog>
       </div>
 
-      <table className="table-fixed w-full">
-        <thead>
-          <tr>
-            <th className="text-left">Nombre</th>
-            <th className="text-left">Universidad</th>
-            <th className="text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table className="table-fixed w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-left">Nombre</TableHead>
+            <TableHead className="text-left">Universidad</TableHead>
+            <TableHead className="text-left">Acciones</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {profesores.map((profesor) => (
-            <tr key={profesor.id}>
-              <td>{profesor.user.nombres + " " + profesor.user.apellidos}</td>
-              <td>{profesor.universidad.nombre}</td>
-              <td>
-                <button
-                  onClick={() => setProfesorSelected(profesor)}
-                  className="btn btn-primary"
+            <TableRow key={profesor.id}>
+              <TableCell>
+                {profesor.user.nombres + " " + profesor.user.apellidos}
+              </TableCell>
+              <TableCell>{profesor.universidad.nombre}</TableCell>
+              <TableCell className="space-x-2">
+                <Button
+                  onClick={() => {
+                    setOpen(true), setProfesorSelected(profesor);
+                  }}
                 >
-                  Editar
-                </button>
-                <button
-                  onClick={() => removeProfesor(profesor)}
-                  className="btn btn-danger"
-                >
-                  Eliminar
-                </button>
-                Acciones
-              </td>
-            </tr>
+                  <Edit2 />
+                </Button>
+                <CustomDialog triggerText={<Trash2 color="red" />}>
+                  <p className="my-4">
+                    ¿Está seguro/a que desea eliminar el/la{" "}
+                    <strong>profesor</strong>?
+                  </p>
+                  <Button
+                    onClick={() => removeProfesor(profesor)}
+                    variant="destructive"
+                  >
+                    Eliminar
+                  </Button>
+                </CustomDialog>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }
