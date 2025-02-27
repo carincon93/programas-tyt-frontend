@@ -1,10 +1,8 @@
 ---
-import Layout from "@/layouts/Layout.astro";
+import PanelLayout from "@/layouts/PanelLayout.astro";
 import InstitucionesTable from "./_table";
 ---
 
-<Layout>
-  Instituciones
-
+<PanelLayout title="Instituciones">
   <InstitucionesTable client:load />
-</Layout>
+</PanelLayout>

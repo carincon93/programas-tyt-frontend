@@ -46,29 +46,49 @@ export default function AsistenciasTable({
   return (
     <div>
       <h1>
-        Asistencia estudiante{" "}
-        {estudiante?.user.nombres + " " + estudiante?.user.apellidos}
+        <span className="bg-amber-500 py-1 px-4 rounded-md text-white">
+          <strong>Estudiante:</strong>
+          {estudiante ? (
+            <span className="ml-2">
+              {estudiante?.user.nombres + " " + estudiante?.user.apellidos}
+            </span>
+          ) : (
+            <>Cargando..</>
+          )}
+        </span>
       </h1>
-      <Table className="table-fixed w-full">
+      <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
             <TableHead className="text-left">Asignatura</TableHead>
+            <TableHead className="text-left">Profesor</TableHead>
             <TableHead className="text-left">Asistencia</TableHead>
             <TableHead className="text-left">Fecha</TableHead>
             <TableHead className="text-left">Observación</TableHead>
-            <TableHead className="text-left">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {asistencias.map((asistencia) => (
-            <TableRow key={asistencia.id}>
-              <TableCell>{asistencia.asignaturaProfesor.asignatura.nombre}</TableCell>
-              <TableCell>{asistencia.asiste ? "Si" : "No"}</TableCell>
-              <TableCell>{asistencia.fecha}</TableCell>
-              <TableCell>{asistencia.observacion}</TableCell>
-              <TableCell>Acciones</TableCell>
+          {asistencias.length > 0 ? (
+            asistencias.map((asistencia) => (
+              <TableRow key={asistencia.id}>
+                <TableCell>
+                  {asistencia.asignaturaProfesor.asignatura.nombre}
+                </TableCell>
+                <TableCell>
+                  {asistencia.asignaturaProfesor.profesor.user.nombres +
+                    " " +
+                    asistencia.asignaturaProfesor.profesor.user.apellidos}
+                </TableCell>
+                <TableCell>{asistencia.asiste ? "Si" : "No"}</TableCell>
+                <TableCell>{asistencia.fecha}</TableCell>
+                <TableCell>{asistencia.observacion}</TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={5}>No hay datos para mostrar</TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>

@@ -11,6 +11,20 @@ export async function fetchProfesoresData(): Promise<{
   return await fetchWithAuth<Profesor[]>(`profesores`, "GET");
 }
 
+export async function fetchAsignaturaByProfesorIdData(
+  profesorId: number
+): Promise<{
+  ok: boolean;
+  data?: AsignaturaProfesor;
+  success?: string;
+  error?: string;
+}> {
+  return await fetchWithAuth<AsignaturaProfesor>(
+    `profesores/${profesorId}/asignatura`,
+    "GET"
+  );
+}
+
 export async function fetchAsignaturasByProfesorData(
   profesorId: number
 ): Promise<{

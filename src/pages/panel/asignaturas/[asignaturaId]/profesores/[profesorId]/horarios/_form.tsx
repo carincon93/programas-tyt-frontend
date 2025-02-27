@@ -69,7 +69,9 @@ export default function AsignaturaHorarioForm({
 
     if (result.ok) {
       toast(
-        `Asignatura ${asignaturaGrupo?.id ? "editada" : "creada"} correctamente`
+        `Asignatura ${
+          asignaturaGrupo?.id ? "editada" : "agendada"
+        } correctamente`
       );
     }
   };
@@ -108,6 +110,7 @@ export default function AsignaturaHorarioForm({
           id="horaInicio"
           name="horaInicio"
           type="time"
+          className="block"
           value={formData.horaInicio}
           onChange={handleChange}
           required
@@ -122,6 +125,7 @@ export default function AsignaturaHorarioForm({
           id="horaFin"
           name="horaFin"
           type="time"
+          className="block"
           value={formData.horaFin}
           onChange={handleChange}
           required
@@ -148,7 +152,7 @@ export default function AsignaturaHorarioForm({
               {grupos.map((grupo) => (
                 <SelectItem key={grupo.id} value={grupo.id.toString()}>
                   {grupo.codigoGrupo}
-                  {" / "}
+                  {" | "}
                   {grupo.programa.nombre}
                 </SelectItem>
               ))}

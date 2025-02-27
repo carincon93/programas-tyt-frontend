@@ -129,3 +129,24 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.container-panel {
+  display: grid;
+  grid-template-columns: 0.6fr 1.4fr 1fr 1fr;
+  grid-template-rows: 0.3fr 1.7fr 1fr 1fr;
+  gap: 0px 0px;
+  grid-template-areas:
+    "TopBar TopBar TopBar TopBar"
+    "AsideMenu Content Content Content"
+    "AsideMenu Content Content Content"
+    "AsideMenu Content Content Content";
+}
+.AsideMenu {
+  grid-area: AsideMenu;
+}
+.TopBar {
+  grid-area: TopBar;
+}
+.Content {
+  grid-area: Content;
+}

@@ -58,7 +58,6 @@ export default function HorarioTable({
 
   return (
     <div>
-      <h1>Horario</h1>
       <div>
         {asignaturaProfesorId && (
           <CustomDialog
@@ -80,62 +79,69 @@ export default function HorarioTable({
           </CustomDialog>
         )}
       </div>
-      <Table className="table-fixed w-full">
+      <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
             <TableHead className="text-left">Fecha</TableHead>
             <TableHead className="text-left">Programa / Grupo</TableHead>
             <TableHead className="text-left">Hora inicio / Hora fin</TableHead>
-            <TableHead className="text-left">Acciones</TableHead>
+            <TableHead className="text-right w-[100px]">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {asignaturasProfesor.map((asignaturaProfesor) => (
-            <>
-              {asignaturaProfesor.horarios.length > 0 ? (
-                asignaturaProfesor.horarios.map((horario) => (
-                  <TableRow key={horario.id}>
-                    <TableCell>{horario.fecha}</TableCell>
-                    <TableCell>
-                      {horario.grupo.programa.nombre} {" / "}
-                      {horario.grupo.codigoGrupo}
-                    </TableCell>
-                    <TableCell>
-                      {horario.horaInicio}
-                      {" - "}
-                      {horario.horaFin}
-                    </TableCell>
+          {asignaturasProfesor.length > 0 ? (
+            asignaturasProfesor.map((asignaturaProfesor) => (
+              <>
+                {asignaturaProfesor.horarios.length > 0 ? (
+                  asignaturaProfesor.horarios.map((horario) => (
+                    <TableRow key={horario.id}>
+                      <TableCell>{horario.fecha}</TableCell>
+                      <TableCell>
+                        {horario.grupo.programa.nombre} {" / "}
+                        {horario.grupo.codigoGrupo}
+                      </TableCell>
+                      <TableCell>
+                        {horario.horaInicio}
+                        {" - "}
+                        {horario.horaFin}
+                      </TableCell>
 
-                    <TableCell className="space-x-2">
-                      <Button
-                        onClick={() => {
-                          setOpen(true), setAsignaturaGrupoelected(horario);
-                        }}
-                      >
-                        <Edit2 />
-                      </Button>
-                      <CustomDialog triggerText={<Trash2 color="red" />}>
-                        <p className="my-4">
-                          ¿Está seguro/a que desea eliminar el{" "}
-                          <strong>horario</strong>?
-                        </p>
+                      <TableCell className="space-x-2">
                         <Button
-                          onClick={() => removeAsignaturaGrupo(horario)}
-                          variant="destructive"
+                          onClick={() => {
+                            setOpen(true), setAsignaturaGrupoelected(horario);
+                          }}
+                          size="sm"
                         >
-                          Eliminar
+                          <Edit2 />
                         </Button>
-                      </CustomDialog>
-                    </TableCell>
+                        <CustomDialog triggerText={<Trash2 color="red" />}>
+                          <p className="my-4">
+                            ¿Está seguro/a que desea eliminar el{" "}
+                            <strong>horario</strong>?
+                          </p>
+                          <Button
+                            onClick={() => removeAsignaturaGrupo(horario)}
+                            variant="destructive"
+                          >
+                            Eliminar
+                          </Button>
+                        </CustomDialog>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4}>No hay datos para mostrar</TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={4}>No hay datos para mostrar</TableCell>
-                </TableRow>
-              )}
-            </>
-          ))}
+                )}
+              </>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={4}>No hay datos para mostrar</TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </div>

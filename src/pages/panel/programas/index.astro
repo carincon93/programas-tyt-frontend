@@ -1,9 +1,8 @@
 ---
-import Layout from "@/layouts/Layout.astro";
+import PanelLayout from "@/layouts/PanelLayout.astro";
 import ProgramasTable from "./_table";
 ---
 
-<Layout>
-  Programas
+<PanelLayout title="Programas">
   <ProgramasTable client:load />
-</Layout>
+</PanelLayout>

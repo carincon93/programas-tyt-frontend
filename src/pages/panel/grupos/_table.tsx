@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import CustomDialog from "@/components/CustomDialog";
-import { Edit2, PlusCircle, Trash2 } from "lucide-react";
+import { Edit2, ExternalLink, PlusCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function GruposTable() {
@@ -53,7 +53,6 @@ export default function GruposTable() {
 
   return (
     <div>
-      <h1>Grupos</h1>
       <div>
         <CustomDialog
           triggerText={
@@ -72,44 +71,59 @@ export default function GruposTable() {
           />
         </CustomDialog>
       </div>
-      <Table className="table-fixed w-full">
+      <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
             <TableHead className="text-left">Código del grupo</TableHead>
             <TableHead className="text-left">Programa</TableHead>
-            <TableHead className="text-left">Acciones</TableHead>
+            <TableHead className="text-right w-[100px]">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {grupos.map((grupo) => (
-            <TableRow key={grupo.id}>
-              <TableCell>{grupo.codigoGrupo}</TableCell>
-              <TableCell>{grupo.programa.nombre}</TableCell>
-              <TableCell className="space-x-2">
-                <a href={`/panel/grupos/${grupo.id}/estudiantes`}>
-                  Estudiantes
-                </a>
-                <Button
-                  onClick={() => {
-                    setOpen(true), setGrupoSelected(grupo);
-                  }}
-                >
-                  <Edit2 />
-                </Button>
-                <CustomDialog triggerText={<Trash2 color="red" />}>
-                  <p className="my-4">
-                    ¿Está seguro/a que desea eliminar el <strong>grupo</strong>?
-                  </p>
-                  <Button
-                    onClick={() => removeGrupo(grupo)}
-                    variant="destructive"
+          {grupos.length > 0 ? (
+            grupos.map((grupo) => (
+              <TableRow key={grupo.id}>
+                <TableCell>{grupo.codigoGrupo}</TableCell>
+                <TableCell>{grupo.programa.nombre}</TableCell>
+                <TableCell className="space-x-2 text-right">
+                  <a
+                    href={`/panel/grupos/${grupo.id}/estudiantes`}
+                    className="inline-flex justify-center items-center gap-1 underline hover:opacity-60"
                   >
-                    Eliminar
-                  </Button>
-                </CustomDialog>
-              </TableCell>
+                    <ExternalLink size={10} className="top-0.5 relative" />
+                    Estudiantes
+                  </a>
+
+                  <div className="space-x-2 mt-4">
+                    <Button
+                      onClick={() => {
+                        setOpen(true), setGrupoSelected(grupo);
+                      }}
+                      size="sm"
+                    >
+                      <Edit2 />
+                    </Button>
+                    <CustomDialog triggerText={<Trash2 color="red" />}>
+                      <p className="my-4">
+                        ¿Está seguro/a que desea eliminar el{" "}
+                        <strong>grupo</strong>?
+                      </p>
+                      <Button
+                        onClick={() => removeGrupo(grupo)}
+                        variant="destructive"
+                      >
+                        Eliminar
+                      </Button>
+                    </CustomDialog>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={3}>No hay datos para mostrar</TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>

@@ -1,4 +1,4 @@
-import type { Estudiante, Nota } from "@/lib/types";
+import type { AsignaturaProfesor, Estudiante, Nota } from "@/lib/types";
 import {
   deleteNota,
   fetchNotasByEstudianteData,
@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Edit2, PlusCircle, Trash2 } from "lucide-react";
 import CustomDialog from "@/components/CustomDialog";
 import { toast } from "sonner";
+import { fetchAsignaturaByProfesorIdData } from "@/services/profesor.service";
 
 interface EstudianteNotasTableProps {
   asignaturaProfesorId: string | undefined;
@@ -32,6 +33,8 @@ export default function EstudianteNotasTable({
   const [notaSelected, setNotaSelected] = useState<Nota>();
   const [notas, setNotas] = useState<Nota[]>([]);
   const [estudiante, setEstudiante] = useState<Estudiante>();
+  const [asignaturaProfesor, setAsignaturaProfesor] =
+    useState<AsignaturaProfesor>();
 
   const fetchNotasByEstudiante = async () => {
     if (!estudianteId) return;
@@ -45,6 +48,15 @@ export default function EstudianteNotasTable({
 
     const response = await fetchEstudianteByIdData(+estudianteId);
     if (response.data) setEstudiante(response.data);
+  };
+
+  const fetchAsignaturaByProfesor = async () => {
+    if (!asignaturaProfesorId) return;
+
+    const response = await fetchAsignaturaByProfesorIdData(
+      +asignaturaProfesorId
+    );
+    if (response.data) setAsignaturaProfesor(response.data);
   };
 
   const refreshNotas = async () => {
@@ -70,13 +82,48 @@ export default function EstudianteNotasTable({
   useEffect(() => {
     fetchNotasByEstudiante();
     fetchEstudianteById();
+    fetchAsignaturaByProfesor();
   }, []);
 
   console.log(notas);
 
   return (
     <div>
-      <h1 className="uppercase">{estudiante?.user.nombres}</h1>
+      <div>
+        <span className="bg-blue-400 py-1 px-4 rounded-md text-white">
+          <strong>Asignatura:</strong>
+          {asignaturaProfesor ? (
+            <span className="ml-2">
+              {asignaturaProfesor?.asignatura.nombre}
+            </span>
+          ) : (
+            <>Cargando..</>
+          )}
+        </span>
+        <span className="bg-green-500 py-1 px-4 rounded-md text-white mx-2 ">
+          <strong>Profesor:</strong>
+          {asignaturaProfesor ? (
+            <span className="ml-2">
+              {asignaturaProfesor?.profesor.user.nombres +
+                " " +
+                asignaturaProfesor?.profesor.user.apellidos}
+            </span>
+          ) : (
+            <>Cargando..</>
+          )}
+        </span>
+        <span className="bg-amber-500 py-1 px-4 rounded-md text-white">
+          <strong>Estudiante:</strong>
+          {estudiante ? (
+            <span className="ml-2">
+              {estudiante?.user.nombres + " " + estudiante?.user.apellidos}
+            </span>
+          ) : (
+            <>Cargando..</>
+          )}
+        </span>
+      </div>
+      <hr className="my-6" />
       <div>
         {estudianteId && asignaturaProfesorId && (
           <CustomDialog
@@ -99,45 +146,55 @@ export default function EstudianteNotasTable({
           </CustomDialog>
         )}
       </div>
-      <Table className="table-fixed w-full">
+      <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
             <TableHead className="text-left">Asignatura</TableHead>
             <TableHead className="text-left">Nota</TableHead>
             <TableHead className="text-left">Fecha</TableHead>
             <TableHead className="text-left">Observación</TableHead>
-            <TableHead className="text-left">Acciones</TableHead>
+            <TableHead className="text-right w-[100px]">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {notas.map((nota) => (
-            <TableRow key={nota.id}>
-              <TableCell>{nota.asignaturaProfesor.asignatura.nombre}</TableCell>
-              <TableCell>{nota.nota}</TableCell>
-              <TableCell>{nota.fecha}</TableCell>
-              <TableCell>{nota.observacion}</TableCell>
-              <TableCell className="space-x-2">
-                <Button
-                  onClick={() => {
-                    setOpen(true), setNotaSelected(nota);
-                  }}
-                >
-                  <Edit2 />
-                </Button>
-                <CustomDialog triggerText={<Trash2 color="red" />}>
-                  <p className="my-4">
-                    ¿Está seguro/a que desea eliminar la <strong>nota</strong>?
-                  </p>
+          {notas.length > 0 ? (
+            notas.map((nota) => (
+              <TableRow key={nota.id}>
+                <TableCell>
+                  {nota.asignaturaProfesor.asignatura.nombre}
+                </TableCell>
+                <TableCell>{nota.nota}</TableCell>
+                <TableCell>{nota.fecha}</TableCell>
+                <TableCell>{nota.observacion}</TableCell>
+                <TableCell className="space-x-2">
                   <Button
-                    onClick={() => removeNota(nota)}
-                    variant="destructive"
+                    onClick={() => {
+                      setOpen(true), setNotaSelected(nota);
+                    }}
+                    size="sm"
                   >
-                    Eliminar
+                    <Edit2 />
                   </Button>
-                </CustomDialog>
-              </TableCell>
+                  <CustomDialog triggerText={<Trash2 color="red" />}>
+                    <p className="my-4">
+                      ¿Está seguro/a que desea eliminar la <strong>nota</strong>
+                      ?
+                    </p>
+                    <Button
+                      onClick={() => removeNota(nota)}
+                      variant="destructive"
+                    >
+                      Eliminar
+                    </Button>
+                  </CustomDialog>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={5}>No hay datos para mostrar</TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>

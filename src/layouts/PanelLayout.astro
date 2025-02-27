@@ -1,0 +1,89 @@
+---
+import "@/styles/global.css";
+import { Toaster } from "@/components/ui/sonner";
+
+const title = Astro.props.title;
+const pathName = Astro.url.pathname;
+
+const urlPart = pathName.split('/')[2]
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <div class="container-panel h-full">
+      <div class="AsideMenu bg-slate-300 p-4">
+        <ul class="space-y-4">
+          <li>
+            <a
+              href="/panel/profesores"
+              class={`text-white shadow-md p-2 ${urlPart?.includes("profesores") ? "bg-slate-500" : "bg-slate-400"} block rounded-md text-center hover:opacity-90`}
+              >Profesores</a
+            >
+          </li>
+          <li>
+            <a
+              href="/panel/estudiantes"
+              class={`text-white shadow-md p-2 ${urlPart?.includes("estudiantes") ? "bg-slate-500" : "bg-slate-400"} block rounded-md text-center hover:opacity-90`}
+              >Estudiantes</a
+            >
+          </li>
+          <li>
+            <a
+              href="/panel/grupos"
+              class={`text-white shadow-md p-2 ${urlPart?.includes("grupos") ? "bg-slate-500" : "bg-slate-400"} block rounded-md text-center hover:opacity-90`}
+              >Grupos</a
+            >
+          </li>
+          <li>
+            <a
+              href="/panel/instituciones"
+              class={`text-white shadow-md p-2 ${urlPart?.includes("instituciones") ? "bg-slate-500" : "bg-slate-400"} block rounded-md text-center hover:opacity-90`}
+              >Instituciones</a
+            >
+          </li>
+          <li>
+            <a
+              href="/panel/programas"
+              class={`text-white shadow-md p-2 ${urlPart?.includes("programas") ? "bg-slate-500" : "bg-slate-400"} block rounded-md text-center hover:opacity-90`}
+              >Programas</a
+            >
+          </li>
+          <li>
+            <a
+              href="/panel/asignaturas"
+              class={`text-white shadow-md p-2 ${urlPart?.includes("asignaturas") ? "bg-slate-500" : "bg-slate-400"} block rounded-md text-center hover:opacity-90`}
+              >Asignaturas</a
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="TopBar p-2 flex items-center">
+        <img
+          src="/Logo-UManizales-color.svg"
+          alt="Logo Universidad de Manizales"
+          width={80}
+          class="ml-3 px-4"
+        />
+        <h1 class="text-2xl font-medium ml-2">
+          Programas Técnicos y Tecnológicos | {title}
+        </h1>
+      </div>
+      <div class="Content p-8 bg-slate-50">
+        <div class="bg-white h-full rounded-md shadow-sm p-8">
+          <slot />
+        </div>
+      </div>
+      <div>
+        <Toaster client:load />
+      </div>
+    </div>
+  </body>
+</html>

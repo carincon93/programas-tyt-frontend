@@ -112,3 +112,8 @@ export interface Asistencia {
   estudiante: Estudiante;
   asignaturaProfesor: AsignaturaProfesor;
 }
+
+export interface Login {
+  correo: string;
+  password: string;
+}

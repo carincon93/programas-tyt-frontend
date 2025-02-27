@@ -32,7 +32,7 @@ export default function CustomDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>{triggerText}</Button>
+        <Button size="sm">{triggerText}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="-top-[10px] relative">

@@ -9,6 +9,7 @@ import {
 import type { AsignaturaGrupo, Estudiante } from "@/lib/types";
 import { fetchAsignaturaGrupoByEstudianteData } from "@/services/asignatura-grupo.service";
 import { fetchEstudianteByIdData } from "@/services/estudiante.service";
+import { ExternalLink } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface EstudianteAsignaturasTableProps {
@@ -48,46 +49,66 @@ export default function EstudianteAsignaturasTable({
 
   return (
     <div>
-      <h1 className="uppercase">{estudiante?.user.nombres}</h1>
+      <h1>
+        <span className="bg-amber-500 py-1 px-4 rounded-md text-white mr-2 font-medium">
+          Estudiante:
+        </span>{" "}
+        {estudiante ? (
+          <>{estudiante?.user.nombres + " " + estudiante?.user.apellidos}</>
+        ) : (
+          <>Cargando..</>
+        )}
+      </h1>
 
-      <Table className="table-fixed w-full">
+      <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
             <TableHead className="text-left">Asignatura</TableHead>
             <TableHead className="text-left">Profesor</TableHead>
             <TableHead className="text-left">Fecha</TableHead>
             <TableHead className="text-left">Hora inicio / Hora fin</TableHead>
-            <TableHead className="text-left">Acciones</TableHead>
+            <TableHead className="text-right w-[100px]">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {asignaturasGrupo.map((asignaturaGrupo) => (
-            <TableRow key={asignaturaGrupo.id}>
-              <TableCell>
-                {asignaturaGrupo.asignaturaProfesor.asignatura.nombre}
-              </TableCell>
-              <TableCell>
-                {asignaturaGrupo.asignaturaProfesor.profesor.user.nombres}{" "}
-                {asignaturaGrupo.asignaturaProfesor.profesor.user.apellidos}
-              </TableCell>
-              <TableCell>{asignaturaGrupo.fecha}</TableCell>
-              <TableCell>
-                {asignaturaGrupo.horaInicio + " - " + asignaturaGrupo.horaFin}
-              </TableCell>
-              <TableCell>
-                <a
-                  href={`/panel/grupos/${grupoId}/estudiantes/${estudiante?.id}/asignaturas/${asignaturaGrupo.asignaturaProfesor.id}/notas`}
-                >
-                  Notas
-                </a>
-                <a
-                  href={`/panel/grupos/${grupoId}/estudiantes/${estudiante?.id}/asignaturas/${asignaturaGrupo.asignaturaProfesor.id}/asistencias`}
-                >
-                  Asistencias
-                </a>
-              </TableCell>
+          {asignaturasGrupo.length > 0 ? (
+            asignaturasGrupo.map((asignaturaGrupo) => (
+              <TableRow key={asignaturaGrupo.id}>
+                <TableCell>
+                  {asignaturaGrupo.asignaturaProfesor.asignatura.nombre}
+                </TableCell>
+                <TableCell>
+                  {asignaturaGrupo.asignaturaProfesor.profesor.user.nombres}{" "}
+                  {asignaturaGrupo.asignaturaProfesor.profesor.user.apellidos}
+                </TableCell>
+                <TableCell>{asignaturaGrupo.fecha}</TableCell>
+                <TableCell>
+                  {asignaturaGrupo.horaInicio + " - " + asignaturaGrupo.horaFin}
+                </TableCell>
+                <TableCell className="space-y-2">
+                  <a
+                    href={`/panel/grupos/${grupoId}/estudiantes/${estudiante?.id}/asignaturas/${asignaturaGrupo.asignaturaProfesor.id}/notas`}
+                    className="inline-flex justify-center items-center gap-1 underline hover:opacity-60"
+                  >
+                    <ExternalLink size={10} className="top-0.5 relative" />
+                    Notas
+                  </a>
+
+                  <a
+                    href={`/panel/grupos/${grupoId}/estudiantes/${estudiante?.id}/asignaturas/${asignaturaGrupo.asignaturaProfesor.id}/asistencias`}
+                    className="inline-flex justify-center items-center gap-1 underline hover:opacity-60"
+                  >
+                    <ExternalLink size={10} className="top-0.5 relative" />
+                    Asistencias
+                  </a>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={5}>No hay datos para mostrar</TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>

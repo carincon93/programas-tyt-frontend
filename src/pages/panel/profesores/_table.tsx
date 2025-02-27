@@ -56,7 +56,6 @@ export default function ProfesoresTable() {
 
   return (
     <div>
-      <h1>Profesores</h1>
       <div>
         <CustomDialog
           triggerText={
@@ -76,44 +75,51 @@ export default function ProfesoresTable() {
         </CustomDialog>
       </div>
 
-      <Table className="table-fixed w-full">
+      <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
             <TableHead className="text-left">Nombre</TableHead>
             <TableHead className="text-left">Universidad</TableHead>
-            <TableHead className="text-left">Acciones</TableHead>
+            <TableHead className="text-right w-[100px]">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {profesores.map((profesor) => (
-            <TableRow key={profesor.id}>
-              <TableCell>
-                {profesor.user.nombres + " " + profesor.user.apellidos}
-              </TableCell>
-              <TableCell>{profesor.universidad.nombre}</TableCell>
-              <TableCell className="space-x-2">
-                <Button
-                  onClick={() => {
-                    setOpen(true), setProfesorSelected(profesor);
-                  }}
-                >
-                  <Edit2 />
-                </Button>
-                <CustomDialog triggerText={<Trash2 color="red" />}>
-                  <p className="my-4">
-                    ¿Está seguro/a que desea eliminar el/la{" "}
-                    <strong>profesor</strong>?
-                  </p>
+          {profesores.length > 0 ? (
+            profesores.map((profesor) => (
+              <TableRow key={profesor.id}>
+                <TableCell>
+                  {profesor.user.nombres + " " + profesor.user.apellidos}
+                </TableCell>
+                <TableCell>{profesor.universidad.nombre}</TableCell>
+                <TableCell className="space-x-2 text-right">
                   <Button
-                    onClick={() => removeProfesor(profesor)}
-                    variant="destructive"
+                    onClick={() => {
+                      setOpen(true), setProfesorSelected(profesor);
+                    }}
+                    size="sm"
                   >
-                    Eliminar
+                    <Edit2 />
                   </Button>
-                </CustomDialog>
-              </TableCell>
+                  <CustomDialog triggerText={<Trash2 color="red" />}>
+                    <p className="my-4">
+                      ¿Está seguro/a que desea eliminar el/la{" "}
+                      <strong>profesor</strong>?
+                    </p>
+                    <Button
+                      onClick={() => removeProfesor(profesor)}
+                      variant="destructive"
+                    >
+                      Eliminar
+                    </Button>
+                  </CustomDialog>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={3}>No hay datos para mostrar</TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>

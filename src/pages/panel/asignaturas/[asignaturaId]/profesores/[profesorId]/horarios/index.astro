@@ -1,16 +1,30 @@
 ---
-import Layout from "@/layouts/Layout.astro";
+import PanelLayout from "@/layouts/PanelLayout.astro";
 import HorarioTable from "./_table";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 const { asignaturaId, profesorId } = Astro.params;
 ---
 
-<Layout>
-  Asignaturas
-
+<PanelLayout title="Horario">
+  <Breadcrumb className="text-xs mb-6">
+    <BreadcrumbList>
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/panel/asignaturas">Asignaturas</BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>Horarios</BreadcrumbItem>
+    </BreadcrumbList>
+  </Breadcrumb>
   <HorarioTable
     asignaturaProfesorId={asignaturaId}
     profesorId={profesorId}
     client:load
   />
-</Layout>
+</PanelLayout>

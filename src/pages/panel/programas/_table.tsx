@@ -56,7 +56,6 @@ export default function ProgramasTable() {
 
   return (
     <div>
-      <h1>Programas</h1>
       <div>
         <CustomDialog
           triggerText={
@@ -75,44 +74,51 @@ export default function ProgramasTable() {
           />
         </CustomDialog>
       </div>
-      <Table className="table-fixed w-full">
+      <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
             <TableHead className="text-left">Nombre</TableHead>
             <TableHead className="text-left">Código del programa</TableHead>
             <TableHead className="text-left">Universidad</TableHead>
-            <TableHead className="text-left">Acciones</TableHead>
+            <TableHead className="text-right w-[100px]">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {programas.map((programa) => (
-            <TableRow key={programa.id}>
-              <TableCell>{programa.nombre}</TableCell>
-              <TableCell>{programa.codigoPrograma}</TableCell>
-              <TableCell>{programa.universidad.nombre}</TableCell>
-              <TableCell className="space-x-2">
-                <Button
-                  onClick={() => {
-                    setOpen(true), setProgramaSelected(programa);
-                  }}
-                >
-                  <Edit2 />
-                </Button>
-                <CustomDialog triggerText={<Trash2 color="red" />}>
-                  <p className="my-4">
-                    ¿Está seguro/a que desea eliminar el{" "}
-                    <strong>programa</strong>?
-                  </p>
+          {programas.length > 0 ? (
+            programas.map((programa) => (
+              <TableRow key={programa.id}>
+                <TableCell>{programa.nombre}</TableCell>
+                <TableCell>{programa.codigoPrograma}</TableCell>
+                <TableCell>{programa.universidad.nombre}</TableCell>
+                <TableCell className="space-x-2">
                   <Button
-                    onClick={() => removePrograma(programa)}
-                    variant="destructive"
+                    onClick={() => {
+                      setOpen(true), setProgramaSelected(programa);
+                    }}
+                    size="sm"
                   >
-                    Eliminar
+                    <Edit2 />
                   </Button>
-                </CustomDialog>
-              </TableCell>
+                  <CustomDialog triggerText={<Trash2 color="red" />}>
+                    <p className="my-4">
+                      ¿Está seguro/a que desea eliminar el{" "}
+                      <strong>programa</strong>?
+                    </p>
+                    <Button
+                      onClick={() => removePrograma(programa)}
+                      variant="destructive"
+                    >
+                      Eliminar
+                    </Button>
+                  </CustomDialog>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={4}>No hay datos para mostrar</TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>

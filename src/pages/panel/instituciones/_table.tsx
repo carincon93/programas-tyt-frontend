@@ -56,7 +56,6 @@ export default function InstitucionesTable() {
 
   return (
     <div>
-      <h1>Instituciones</h1>
       <div>
         <CustomDialog
           triggerText={
@@ -76,44 +75,51 @@ export default function InstitucionesTable() {
         </CustomDialog>
       </div>
 
-      <Table className="table-fixed w-full">
+      <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
             <TableHead className="text-left">Nombre</TableHead>
             <TableHead className="text-left">Dirección</TableHead>
             <TableHead className="text-left">Teléfono</TableHead>
-            <TableHead className="text-left">Acciones</TableHead>
+            <TableHead className="text-right w-[100px]">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {instituciones.map((institucion) => (
-            <TableRow key={institucion.id}>
-              <TableCell>{institucion.nombre}</TableCell>
-              <TableCell>{institucion.direccion}</TableCell>
-              <TableCell>{institucion.telefono}</TableCell>
-              <TableCell className="space-x-2">
-                <Button
-                  onClick={() => {
-                    setOpen(true), setInstitucionSelected(institucion);
-                  }}
-                >
-                  <Edit2 />
-                </Button>
-                <CustomDialog triggerText={<Trash2 color="red" />}>
-                  <p className="my-4">
-                    ¿Está seguro/a que desea eliminar la{" "}
-                    <strong>institución</strong>?
-                  </p>
+          {instituciones.length > 0 ? (
+            instituciones.map((institucion) => (
+              <TableRow key={institucion.id}>
+                <TableCell>{institucion.nombre}</TableCell>
+                <TableCell>{institucion.direccion}</TableCell>
+                <TableCell>{institucion.telefono}</TableCell>
+                <TableCell className="space-x-2">
                   <Button
-                    onClick={() => removeInstitucion(institucion)}
-                    variant="destructive"
+                    onClick={() => {
+                      setOpen(true), setInstitucionSelected(institucion);
+                    }}
+                    size="sm"
                   >
-                    Eliminar
+                    <Edit2 />
                   </Button>
-                </CustomDialog>
-              </TableCell>
+                  <CustomDialog triggerText={<Trash2 color="red" />}>
+                    <p className="my-4">
+                      ¿Está seguro/a que desea eliminar la{" "}
+                      <strong>institución</strong>?
+                    </p>
+                    <Button
+                      onClick={() => removeInstitucion(institucion)}
+                      variant="destructive"
+                    >
+                      Eliminar
+                    </Button>
+                  </CustomDialog>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={4}>No hay datos para mostrar</TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>
