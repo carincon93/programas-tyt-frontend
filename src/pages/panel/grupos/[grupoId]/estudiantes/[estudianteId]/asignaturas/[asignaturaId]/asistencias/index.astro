@@ -1,0 +1,43 @@
+---
+import PanelLayout from "@/layouts/PanelLayout.astro";
+import AsignaturasEstudianteTable from "./_table";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+
+const { grupoId, asignaturaId, estudianteId } = Astro.params;
+---
+
+<PanelLayout title="Asistencias">
+  <Breadcrumb className="text-xs mb-6">
+    <BreadcrumbList>
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/panel/grupos">Grupos</BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>
+        <BreadcrumbLink href={`/panel/grupos/${grupoId}/estudiantes`}
+          >Estudiantes</BreadcrumbLink
+        >
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>
+        <BreadcrumbLink
+          href={`/panel/grupos/${grupoId}/estudiantes/${estudianteId}/asignaturas`}
+          >Asignaturas</BreadcrumbLink
+        >
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>Asistencias</BreadcrumbItem>
+    </BreadcrumbList>
+  </Breadcrumb>
+  <AsignaturasEstudianteTable
+    asignaturaProfesorId={asignaturaId}
+    estudianteId={estudianteId}
+    client:load
+  />
+</PanelLayout>

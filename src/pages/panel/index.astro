@@ -1,0 +1,18 @@
+---
+import PanelLayout from "@/layouts/PanelLayout.astro";
+
+import { authMiddleware } from "@/authMiddleware";
+
+const isAuthenticated = await authMiddleware(Astro.cookies);
+
+console.log("isAuthenticated", isAuthenticated);
+if (!isAuthenticated) {
+  return Astro.redirect("/login");
+}
+---
+
+<PanelLayout title="Panel principal">
+  <h1 class="text-2xl font-medium">
+    !Bienvenido Administrador/a de Programas TyT 👋🏻!
+  </h1>
+</PanelLayout>
