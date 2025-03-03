@@ -39,7 +39,7 @@ export default function AsistenciaForm({
     asignaturaProfesorId:
       asistencia?.asignaturaProfesorId || asignaturaProfesorId,
     estudianteId: asistencia?.estudianteId || estudianteId,
-    asiste: asistencia?.asiste || undefined,
+    asiste: asistencia?.asiste || false,
     fecha: asistencia?.fecha || "",
     observacion: asistencia?.observacion || "",
   });
@@ -66,11 +66,10 @@ export default function AsistenciaForm({
       formData
     );
 
-    if (onAsistenciaCreatedOrUpdated) {
-      onAsistenciaCreatedOrUpdated(result);
-    }
-
     if (result.ok) {
+      if (onAsistenciaCreatedOrUpdated) {
+        onAsistenciaCreatedOrUpdated(result);
+      }
       toast(
         `Asistencia ${asistencia?.id ? "editada" : "creada"} correctamente`
       );

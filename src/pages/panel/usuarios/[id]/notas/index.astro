@@ -1,0 +1,26 @@
+---
+import PanelLayout from "@/layouts/PanelLayout.astro";
+import NotasTable from "./_table";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+
+const id = Astro.params.id;
+---
+
+<PanelLayout title="Notas">
+  <Breadcrumb className="text-xs mb-6">
+    <BreadcrumbList>
+      <BreadcrumbItem>
+        <BreadcrumbLink href="/panel/estudiantes">Estudiantes</BreadcrumbLink>
+      </BreadcrumbItem>
+      <BreadcrumbSeparator />
+      <BreadcrumbItem>Notas</BreadcrumbItem>
+    </BreadcrumbList>
+  </Breadcrumb>
+  <NotasTable estudianteId={id} client:load />
+</PanelLayout>

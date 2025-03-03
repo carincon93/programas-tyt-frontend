@@ -1,8 +1,8 @@
-import type { Estudiante, Grupo, Institucion } from "@/lib/types";
+import type { User, Grupo } from "@/lib/types";
 
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { Asterisk } from "lucide-react";
-import { createOrUpdateEstudiante } from "@/services/estudiante.service";
+import { fetchUsersData, createOrUpdateUser } from "@/services/user.service";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,40 +14,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { fetchInstitucionesData } from "@/services/institucion.service";
-import { fetchGruposData } from "@/services/grupo.service";
 import { toast } from "sonner";
 
-interface EstudianteFormProps {
-  estudiante?: Estudiante;
-  onEstudianteCreatedOrUpdated?: (result: {
+interface UserFormProps {
+  user?: User;
+  onUserCreatedOrUpdated?: (result: {
     ok: boolean;
     success?: string;
     error?: string;
   }) => Promise<void>;
 }
 
-export default function EstudianteForm({
-  estudiante,
-  onEstudianteCreatedOrUpdated,
-}: EstudianteFormProps) {
-  const [instituciones, setInstituciones] = useState<Institucion[]>([]);
-  const [grupos, setGrupos] = useState<Grupo[]>([]);
-  const [formData, setFormData] = useState<Partial<Estudiante>>({
-    user: {
-      id: estudiante?.user?.id,
-      nombres: estudiante?.user?.nombres || "",
-      apellidos: estudiante?.user?.apellidos || "",
-      email: estudiante?.user?.email || "",
-      direccion: estudiante?.user?.direccion || "",
-      tipoDocumento: estudiante?.user?.tipoDocumento || "",
-      numeroDocumento: estudiante?.user?.numeroDocumento || "",
-      telefono: estudiante?.user?.telefono || "",
-      password: estudiante?.user?.password || "",
-    },
-    grupoId: estudiante?.grupoId,
-    institucionId: estudiante?.institucionId,
-    codigoEstudiante: estudiante?.codigoEstudiante || "",
+export default function UserForm({
+  user,
+  onUserCreatedOrUpdated,
+}: UserFormProps) {
+  const [users, setUsers] = useState<User[]>([]);
+  const [formData, setFormData] = useState<Partial<User>>({
+    id: user?.id,
+    nombres: user?.nombres || "",
+    apellidos: user?.apellidos || "",
+    email: user?.email || "",
+    password: "",
+    direccion: user?.direccion || "",
+    tipoDocumento: user?.tipoDocumento || "",
+    numeroDocumento: user?.numeroDocumento || "",
+    telefono: user?.telefono || "",
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -55,44 +47,33 @@ export default function EstudianteForm({
 
     setFormData((prev) => ({
       ...prev,
-      user: {
-        ...prev.user,
-        [name]: value,
-      } as Estudiante["user"],
+      [name]: value,
     }));
   };
 
-  const fetchInstituciones = async () => {
-    const response = await fetchInstitucionesData();
-    if (response.data) setInstituciones(response.data);
-  };
-
-  const fetchGrupos = async () => {
-    const response = await fetchGruposData();
-    if (response.data) setGrupos(response.data);
+  const fetchUsers = async () => {
+    const response = await fetchUsersData();
+    if (response.data) setUsers(response.data);
   };
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const result = await createOrUpdateEstudiante(estudiante, formData);
+    const result = await createOrUpdateUser(user, formData);
 
     if (result.ok) {
-      if (onEstudianteCreatedOrUpdated) {
-        onEstudianteCreatedOrUpdated(result);
+      if (onUserCreatedOrUpdated) {
+        onUserCreatedOrUpdated(result);
       }
-      toast(
-        `Estudiante ${estudiante?.id ? "editado" : "creado"} correctamente`
-      );
+      toast(`Usuario ${user?.id ? "editado" : "creado"} correctamente`);
     }
   };
 
   useEffect(() => {
-    fetchInstituciones();
-    fetchGrupos();
+    fetchUsers();
   }, []);
 
-  console.log(estudiante);
+  console.log(user);
 
   return (
     <form onSubmit={submit} className="space-y-8 space-x-4 grid grid-cols-2">
@@ -104,7 +85,7 @@ export default function EstudianteForm({
           id="nombres"
           name="nombres"
           type="text"
-          value={formData.user?.nombres}
+          value={formData.nombres}
           onChange={handleChange}
           required
         />
@@ -117,7 +98,7 @@ export default function EstudianteForm({
           id="apellidos"
           name="apellidos"
           type="text"
-          value={formData.user?.apellidos}
+          value={formData.apellidos}
           onChange={handleChange}
           required
         />
@@ -131,27 +112,25 @@ export default function EstudianteForm({
           id="email"
           name="email"
           type="email"
-          value={formData.user?.email}
+          value={formData.email}
           onChange={handleChange}
           required
         />
       </fieldset>
 
-      {!estudiante && (
-        <fieldset>
-          <Label htmlFor="password" className="flex items-center gap-1 mb-4">
-            Contraseña <Asterisk size={12} strokeWidth={1} />
-          </Label>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            value={formData.user?.password}
-            onChange={handleChange}
-            required
-          />
-        </fieldset>
-      )}
+      <fieldset>
+        <Label htmlFor="password" className="flex items-center gap-1 mb-4">
+          Contraseña <Asterisk size={12} strokeWidth={1} />
+        </Label>
+        <Input
+          id="password"
+          name="password"
+          type="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
+      </fieldset>
 
       <fieldset>
         <Label htmlFor="direccion" className="flex items-center gap-1 mb-4">
@@ -161,7 +140,7 @@ export default function EstudianteForm({
           id="direccion"
           name="direccion"
           type="address"
-          value={formData.user?.direccion}
+          value={formData.direccion}
           onChange={handleChange}
           required
         />
@@ -177,13 +156,10 @@ export default function EstudianteForm({
           onValueChange={(value) =>
             setFormData((prev) => ({
               ...prev,
-              user: {
-                ...prev.user,
-                tipoDocumento: value,
-              },
+              tipoDocumento: value,
             }))
           }
-          defaultValue={formData.user?.tipoDocumento}
+          defaultValue={formData.tipoDocumento}
         >
           <SelectTrigger>
             <SelectValue placeholder="Seleccione una opción" />
@@ -209,7 +185,7 @@ export default function EstudianteForm({
           id="numeroDocumento"
           name="numeroDocumento"
           type="number"
-          value={formData.user?.numeroDocumento}
+          value={formData.numeroDocumento}
           onChange={handleChange}
           required
         />
@@ -223,35 +199,32 @@ export default function EstudianteForm({
           id="telefono"
           name="telefono"
           type="number"
-          value={formData.user?.telefono}
+          value={formData.telefono}
           onChange={handleChange}
           required
         />
       </fieldset>
 
-      <fieldset>
-        <Label htmlFor="institucionId" className="flex items-center gap-1 mb-4">
+      {/* <fieldset>
+        <Label htmlFor="userId" className="flex items-center gap-1 mb-4">
           Institución <Asterisk size={12} strokeWidth={1} />
         </Label>
 
         <Select
-          name="institucionId"
+          name="userId"
           onValueChange={(value) =>
-            setFormData((prev) => ({ ...prev, institucionId: +value }))
+            setFormData((prev) => ({ ...prev, userId: +value }))
           }
-          defaultValue={formData.institucionId?.toString()}
+          defaultValue={formData.userId?.toString()}
         >
           <SelectTrigger>
             <SelectValue placeholder="Seleccione una opción" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {instituciones.map((institucion) => (
-                <SelectItem
-                  key={institucion.id}
-                  value={institucion.id.toString()}
-                >
-                  {institucion.nombre}
+              {users.map((user) => (
+                <SelectItem key={user.id} value={user.id.toString()}>
+                  {user.nombre}
                 </SelectItem>
               ))}
             </SelectGroup>
@@ -289,26 +262,23 @@ export default function EstudianteForm({
       </fieldset>
 
       <fieldset>
-        <Label
-          htmlFor="codigoEstudiante"
-          className="flex items-center gap-1 mb-4"
-        >
-          Código del estudiante <Asterisk size={12} strokeWidth={1} />
+        <Label htmlFor="codigoUser" className="flex items-center gap-1 mb-4">
+          Código del user <Asterisk size={12} strokeWidth={1} />
         </Label>
         <Input
-          id="codigoEstudiante"
-          name="codigoEstudiante"
+          id="codigoUser"
+          name="codigoUser"
           type="text"
-          value={formData.codigoEstudiante}
+          value={formData.codigoUser}
           onChange={(e) =>
             setFormData((prev) => ({
               ...prev,
-              codigoEstudiante: e.target.value,
+              codigoUser: e.target.value,
             }))
           }
           required
         />
-      </fieldset>
+      </fieldset> */}
 
       <div className="col-span-2">
         <Button type="submit" className="w-full mt-4">

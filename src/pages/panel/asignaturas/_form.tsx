@@ -40,10 +40,10 @@ export default function AsignaturaForm({
 
     const result = await createOrUpdateAsignatura(asignatura, formData);
 
-    if (onAsignaturaCreatedOrUpdated) {
-      onAsignaturaCreatedOrUpdated(result);
-    }
     if (result.ok) {
+      if (onAsignaturaCreatedOrUpdated) {
+        onAsignaturaCreatedOrUpdated(result);
+      }
       toast(
         `Asignatura ${asignatura?.id ? "editada" : "creada"} correctamente`
       );

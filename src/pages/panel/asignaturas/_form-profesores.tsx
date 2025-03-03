@@ -30,10 +30,11 @@ export default function AsignaturaProfesoresForm({
     e.preventDefault();
 
     const result = await assignAsignaturaProfesores(asignatura, selectedIds);
-    if (onAsignaturaProfesoresCreatedOrUpdated) {
-      onAsignaturaProfesoresCreatedOrUpdated(result);
-    }
+
     if (result.ok) {
+      if (onAsignaturaProfesoresCreatedOrUpdated) {
+        onAsignaturaProfesoresCreatedOrUpdated(result);
+      }
       toast(`Asignación creada correctamente`);
     }
   };
@@ -46,7 +47,9 @@ export default function AsignaturaProfesoresForm({
   useEffect(() => {
     fetchProfesores();
     setSelectedIds(
-      asignatura?.asignaturaProfesores.map((ap) => ap.profesor.id) || []
+      asignatura?.asignaturaProfesores.map(
+        (asignaturaProfesor) => asignaturaProfesor.profesor.id
+      ) || []
     );
   }, []);
 

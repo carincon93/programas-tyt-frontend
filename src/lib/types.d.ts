@@ -2,7 +2,8 @@ export interface User {
   id: number;
   nombres: string;
   apellidos: string;
-  correo: string;
+  email: string;
+  password: string;
   telefono: string;
   direccion: string;
   tipoDocumento: string;
@@ -114,6 +115,6 @@ export interface Asistencia {
 }
 
 export interface Login {
-  correo: string;
+  email: string;
   password: string;
 }

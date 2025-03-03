@@ -36,7 +36,7 @@ export default function ProfesorForm({
       id: profesor?.user.id || undefined,
       nombres: profesor?.user.nombres || "",
       apellidos: profesor?.user.apellidos || "",
-      correo: profesor?.user.correo || "",
+      email: profesor?.user.email || "",
       direccion: profesor?.user.direccion || "",
       tipoDocumento: profesor?.user.tipoDocumento || "",
       numeroDocumento: profesor?.user.numeroDocumento || "",
@@ -62,11 +62,10 @@ export default function ProfesorForm({
 
     const result = await createOrUpdateProfesor(profesor, formData);
 
-    if (onProfesorCreatedOrUpdated) {
-      onProfesorCreatedOrUpdated(result);
-    }
-
     if (result.ok) {
+      if (onProfesorCreatedOrUpdated) {
+        onProfesorCreatedOrUpdated(result);
+      }
       toast(`Profesor ${profesor?.id ? "editado" : "creado"} correctamente`);
     }
   };
@@ -112,14 +111,14 @@ export default function ProfesorForm({
       </fieldset>
 
       <fieldset>
-        <Label htmlFor="correo" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="email" className="flex items-center gap-1 mb-4">
           Correo electrónico <Asterisk size={12} strokeWidth={1} />
         </Label>
         <Input
-          id="correo"
-          name="correo"
+          id="email"
+          name="email"
           type="email"
-          value={formData.user?.correo}
+          value={formData.user?.email}
           onChange={handleChange}
           required
         />
