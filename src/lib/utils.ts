@@ -45,28 +45,6 @@ export const fetchWithAuth = async <T>(
 
     let response = await makeRequest();
 
-    // Si el token expiró, intenta refrescarlo y vuelve a hacer la petición
-    if (response.status === 401) {
-      const refreshResponse = await fetch(`${URL_BACKEND}/auth/refresh`, {
-        method: "POST",
-        credentials: "include",
-      });
-
-      if (refreshResponse.ok) {
-        const refreshToken = await responseGetToken();
-
-        // Actualizar el token en los headers
-        headers.Authorization = `Bearer ${refreshToken}`;
-
-        // Reintentar la petición original con el nuevo token
-        response = await makeRequest();
-      } else {
-        console.error("Refresh token expirado. Redirigiendo al login...");
-        window.location.href = "/login";
-        return { ok: false, error: "Session expired, please log in again." };
-      }
-    }
-
     if (response.ok) {
       const data: T = await response.json();
       const success = `${method} request completed successfully`;
@@ -83,7 +61,17 @@ export const fetchWithAuth = async <T>(
   }
 };
 
-async function getToken() {
+export const refreshToken = async () => {
+  const response = await fetch(`${URL_BACKEND}/auth/refresh`, {
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  return data;
+};
+
+export const getToken = async () => {
   const response = await fetch(`${URL_BACKEND}/auth/token`, {
     credentials: "include", // 🔥 Necesario para enviar cookies
   });
@@ -92,4 +80,4 @@ async function getToken() {
 
   const data = await response.json();
   return data.token;
-}
+};
