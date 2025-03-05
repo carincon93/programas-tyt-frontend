@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { login } from "@/services/auth.service";
 import { toast } from "sonner";
+import { setUser } from "@/store/auth.store";
 
 interface LoginFormProps {}
 
@@ -31,8 +32,9 @@ export default function LoginForm({}: LoginFormProps) {
     const result = await login(formData);
 
     if (result.ok) {
+      setUser(result.data.user);
       toast(`Ha iniciado sesión correctamente.`);
-      window.location.href = "/panel";
+      window.location.href = "/panel/inicio";
     }
   };
 

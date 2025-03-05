@@ -38,7 +38,7 @@ export default function InstitucionesTable() {
     const response = await deleteInstitucion(institucion);
     if (response.ok) {
       refreshInstituciones();
-      toast("Institución eliminado correctamente");
+      toast("Institución eliminada correctamente");
     }
   };
 

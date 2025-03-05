@@ -234,58 +234,33 @@ export default function EstudianteForm({
           Institución <Asterisk size={12} strokeWidth={1} />
         </Label>
 
-        <Select
-          name="institucionId"
-          onValueChange={(value) =>
-            setFormData((prev) => ({ ...prev, institucionId: +value }))
-          }
-          defaultValue={formData.institucionId?.toString()}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Seleccione una opción" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {instituciones.map((institucion) => (
-                <SelectItem
-                  key={institucion.id}
-                  value={institucion.id.toString()}
-                >
-                  {institucion.nombre}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </fieldset>
-
-      <fieldset>
-        <Label htmlFor="grupoId" className="flex items-center gap-1 mb-4">
-          Grupo / Programa <Asterisk size={12} strokeWidth={1} />
-        </Label>
-
-        <Select
-          name="grupoId"
-          onValueChange={(value) =>
-            setFormData((prev) => ({ ...prev, grupoId: +value }))
-          }
-          defaultValue={formData?.grupoId?.toString()}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Seleccione una opción" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {grupos.map((grupo) => (
-                <SelectItem key={grupo.id} value={grupo.id.toString()}>
-                  {grupo.codigoGrupo}
-                  {" / "}
-                  {grupo.programa.nombre}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        {instituciones.length > 0 ? (
+          <Select
+            name="institucionId"
+            onValueChange={(value) =>
+              setFormData((prev) => ({ ...prev, institucionId: +value }))
+            }
+            defaultValue={formData.institucionId?.toString()}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccione una opción" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+          {instituciones.map((institucion) => (
+            <SelectItem
+              key={institucion.id}
+              value={institucion.id.toString()}
+            >
+              {institucion.nombre}
+            </SelectItem>
+          ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        ) : (
+          <div>No hay datos para mostrar</div>
+        )}
       </fieldset>
 
       <fieldset>
@@ -308,6 +283,35 @@ export default function EstudianteForm({
           }
           required
         />
+      </fieldset>
+
+      <fieldset className="col-span-2">
+        <Label htmlFor="grupoId" className="flex items-center gap-1 mb-4">
+          Grupo / Programa <Asterisk size={12} strokeWidth={1} />
+        </Label>
+
+        <Select
+          name="grupoId"
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, grupoId: +value }))
+          }
+          defaultValue={formData?.grupoId?.toString()}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Seleccione una opción" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {grupos.map((grupo) => (
+                <SelectItem key={grupo.id} value={grupo.id.toString()}>
+                  {grupo.codigoGrupo.slice(0, 20)}
+                  {" / "}
+                  {grupo.programa.nombre}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </fieldset>
 
       <div className="col-span-2">

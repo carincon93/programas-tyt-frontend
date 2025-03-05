@@ -1,4 +1,4 @@
-import type { User, Grupo } from "@/lib/types";
+import type { User, Grupo, Rol } from "@/lib/types";
 
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { Asterisk } from "lucide-react";
@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { fetchRolesData } from "@/services/rol.service";
 
 interface UserFormProps {
   user?: User;
@@ -29,7 +30,8 @@ export default function UserForm({
   user,
   onUserCreatedOrUpdated,
 }: UserFormProps) {
-  const [users, setUsers] = useState<User[]>([]);
+  const [roles, setRoles] = useState<Rol[]>([]);
+
   const [formData, setFormData] = useState<Partial<User>>({
     id: user?.id,
     nombres: user?.nombres || "",
@@ -40,6 +42,7 @@ export default function UserForm({
     tipoDocumento: user?.tipoDocumento || "",
     numeroDocumento: user?.numeroDocumento || "",
     telefono: user?.telefono || "",
+    rolId: user?.rolId || undefined,
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -49,11 +52,6 @@ export default function UserForm({
       ...prev,
       [name]: value,
     }));
-  };
-
-  const fetchUsers = async () => {
-    const response = await fetchUsersData();
-    if (response.data) setUsers(response.data);
   };
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
@@ -69,8 +67,13 @@ export default function UserForm({
     }
   };
 
+  const fetchRoles = async () => {
+    const response = await fetchRolesData();
+    if (response.data) setRoles(response.data);
+  };
+
   useEffect(() => {
-    fetchUsers();
+    fetchRoles();
   }, []);
 
   console.log(user);
@@ -205,80 +208,37 @@ export default function UserForm({
         />
       </fieldset>
 
-      {/* <fieldset>
-        <Label htmlFor="userId" className="flex items-center gap-1 mb-4">
-          Institución <Asterisk size={12} strokeWidth={1} />
+      <fieldset className="col-span-2">
+        <Label htmlFor="rolId" className="flex items-center gap-1 mb-4">
+          Rol <Asterisk size={12} strokeWidth={1} />
         </Label>
 
         <Select
-          name="userId"
+          name="rolId"
           onValueChange={(value) =>
-            setFormData((prev) => ({ ...prev, userId: +value }))
+            setFormData((prev) => ({ ...prev, rolId: +value }))
           }
-          defaultValue={formData.userId?.toString()}
+          defaultValue={formData?.rolId?.toString()}
         >
           <SelectTrigger>
             <SelectValue placeholder="Seleccione una opción" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {users.map((user) => (
-                <SelectItem key={user.id} value={user.id.toString()}>
-                  {user.nombre}
-                </SelectItem>
-              ))}
+              {roles
+                .filter(
+                  (rol) =>
+                    rol.nombre !== "ESTUDIANTE" && rol.nombre !== "PROFESOR"
+                )
+                .map((rol) => (
+                  <SelectItem key={rol.id} value={rol.id.toString()}>
+                    {rol.nombre}
+                  </SelectItem>
+                ))}
             </SelectGroup>
           </SelectContent>
         </Select>
       </fieldset>
-
-      <fieldset>
-        <Label htmlFor="grupoId" className="flex items-center gap-1 mb-4">
-          Grupo / Programa <Asterisk size={12} strokeWidth={1} />
-        </Label>
-
-        <Select
-          name="grupoId"
-          onValueChange={(value) =>
-            setFormData((prev) => ({ ...prev, grupoId: +value }))
-          }
-          defaultValue={formData?.grupoId?.toString()}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Seleccione una opción" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {grupos.map((grupo) => (
-                <SelectItem key={grupo.id} value={grupo.id.toString()}>
-                  {grupo.codigoGrupo}
-                  {" / "}
-                  {grupo.programa.nombre}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </fieldset>
-
-      <fieldset>
-        <Label htmlFor="codigoUser" className="flex items-center gap-1 mb-4">
-          Código del user <Asterisk size={12} strokeWidth={1} />
-        </Label>
-        <Input
-          id="codigoUser"
-          name="codigoUser"
-          type="text"
-          value={formData.codigoUser}
-          onChange={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              codigoUser: e.target.value,
-            }))
-          }
-          required
-        />
-      </fieldset> */}
 
       <div className="col-span-2">
         <Button type="submit" className="w-full mt-4">

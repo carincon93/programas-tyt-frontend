@@ -31,6 +31,7 @@ export default function ProfesorForm({
   onProfesorCreatedOrUpdated,
 }: ProfesorFormProps) {
   const [universidades, setUniversidades] = useState<Universidad[]>([]);
+
   const [formData, setFormData] = useState<Partial<Profesor>>({
     user: {
       id: profesor?.user.id || undefined,

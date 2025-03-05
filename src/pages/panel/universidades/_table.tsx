@@ -38,7 +38,7 @@ export default function UniversidadesTable() {
     const response = await deleteUniversidad(universidad);
     if (response.ok) {
       refreshUniversidades();
-      toast("Institución eliminado correctamente");
+      toast("Universidad eliminada correctamente");
     }
   };
 

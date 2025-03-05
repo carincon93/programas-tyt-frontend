@@ -64,6 +64,7 @@ export default function EstudiantesTable() {
               Añadir estudiante
             </>
           }
+          dialogContentClassName="h-full overflow-y-auto"
           open={open}
           setOpen={setOpen}
         >
