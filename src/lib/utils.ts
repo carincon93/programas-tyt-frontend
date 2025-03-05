@@ -9,8 +9,9 @@ export function cn(...inputs: ClassValue[]) {
 export const fetchWithAuth = async <T>(
   endpoint: string,
   method: "POST" | "PATCH" | "DELETE" | "GET",
-  body?: BodyInit | null | undefined | number[] | Partial<T>
-): Promise<{ ok: boolean; data?: T; success?: string; error?: string }> => {
+  body?: BodyInit | null | undefined | number[] | Partial<T>,
+  retries: number = 1
+): Promise<{ ok: boolean; data?: T; success?: string; error?: string, status?: number }> => {
   const responseGetToken = async (): Promise<Response> => {
     return await getToken();
   };
@@ -44,6 +45,20 @@ export const fetchWithAuth = async <T>(
     };
 
     let response = await makeRequest();
+
+    if (response.status === 401 && retries > 0) {
+      console.warn("Token expirado, intentando refrescar...");
+
+      const responseRefreshToken = await refreshToken();
+
+      if (responseRefreshToken.ok) {
+        console.log("Token refrescado exitosamente");
+        return await fetchWithAuth(endpoint, method, body, retries - 1); // Reintenta la petición con el nuevo token
+      } else {
+        console.error("Error al refrescar el token");
+        return { ok: false, error: "No se pudo refrescar el token" };
+      }
+    }
 
     if (response.ok) {
       const data: T = await response.json();
