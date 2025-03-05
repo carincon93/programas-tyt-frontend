@@ -8,6 +8,17 @@ export interface User {
   direccion: string;
   tipoDocumento: string;
   numeroDocumento: string;
+  rolId: number;
+
+  rol: Rol;
+}
+
+export interface Rol {
+  id: number;
+  nombre: string;
+  descripcion: string;
+
+  users: User[];
 }
 
 export interface Universidad {
