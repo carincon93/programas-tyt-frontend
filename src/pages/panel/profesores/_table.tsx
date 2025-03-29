@@ -64,6 +64,7 @@ export default function ProfesoresTable() {
               Añadir profesor
             </>
           }
+          dialogContentClassName="h-full overflow-y-auto"
           open={open}
           setOpen={setOpen}
         >

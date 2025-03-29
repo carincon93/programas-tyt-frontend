@@ -1,10 +1,10 @@
-import type { Institucion } from "@/lib/types";
+import type { Universidad } from "@/lib/types";
 import {
-  fetchInstitucionesData,
-  deleteInstitucion,
-} from "@/services/institucion.service";
+  fetchUniversidadesData,
+  deleteUniversidad,
+} from "@/services/universidad.service";
 import { useEffect, useState } from "react";
-import InstitucionForm from "./_form";
+import UniversidadForm from "./_form";
 import {
   Table,
   TableBody,
@@ -18,41 +18,41 @@ import { Edit2, PlusCircle, Trash2 } from "lucide-react";
 import CustomDialog from "@/components/CustomDialog";
 import { toast } from "sonner";
 
-export default function InstitucionesTable() {
+export default function UniversidadesTable() {
   const [open, setOpen] = useState<boolean>(false);
-  const [institucionSelected, setInstitucionSelected] = useState<Institucion>();
-  const [instituciones, setInstituciones] = useState<Institucion[]>([]);
+  const [universidadSelected, setUniversidadSelected] = useState<Universidad>();
+  const [universidades, setUniversidades] = useState<Universidad[]>([]);
 
-  const fetchInstituciones = async () => {
-    const response = await fetchInstitucionesData();
-    if (response.data) setInstituciones(response.data);
+  const fetchUniversidades = async () => {
+    const response = await fetchUniversidadesData();
+    if (response.data) setUniversidades(response.data);
   };
 
-  const refreshInstituciones = async () => {
-    fetchInstituciones();
-    setInstitucionSelected(undefined);
+  const refreshUniversidades = async () => {
+    fetchUniversidades();
+    setUniversidadSelected(undefined);
     setOpen(false);
   };
 
-  const removeInstitucion = async (institucion: Institucion) => {
-    const response = await deleteInstitucion(institucion);
+  const removeUniversidad = async (universidad: Universidad) => {
+    const response = await deleteUniversidad(universidad);
     if (response.ok) {
-      refreshInstituciones();
-      toast("Institución eliminada correctamente");
+      refreshUniversidades();
+      toast("Universidad eliminada correctamente");
     }
   };
 
   useEffect(() => {
     if (!open) {
-      setInstitucionSelected(undefined);
+      setUniversidadSelected(undefined);
     }
   }, [open]);
 
   useEffect(() => {
-    fetchInstituciones();
+    fetchUniversidades();
   }, []);
 
-  console.log(instituciones);
+  console.log(universidades);
 
   return (
     <div>
@@ -61,16 +61,16 @@ export default function InstitucionesTable() {
           triggerText={
             <>
               <PlusCircle />
-              Añadir institución
+              Añadir universidad
             </>
           }
           open={open}
           setOpen={setOpen}
         >
-          <InstitucionForm
-            key={institucionSelected?.id}
-            institucion={institucionSelected}
-            onInstitucionCreatedOrUpdated={refreshInstituciones}
+          <UniversidadForm
+            key={universidadSelected?.id}
+            universidad={universidadSelected}
+            onUniversidadCreatedOrUpdated={refreshUniversidades}
           />
         </CustomDialog>
       </div>
@@ -85,16 +85,16 @@ export default function InstitucionesTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {instituciones.length > 0 ? (
-            instituciones.map((institucion) => (
-              <TableRow key={institucion.id}>
-                <TableCell>{institucion.nombre}</TableCell>
-                <TableCell>{institucion.direccion}</TableCell>
-                <TableCell>{institucion.telefono}</TableCell>
+          {universidades.length > 0 ? (
+            universidades.map((universidad) => (
+              <TableRow key={universidad.id}>
+                <TableCell>{universidad.nombre}</TableCell>
+                <TableCell>{universidad.direccion}</TableCell>
+                <TableCell>{universidad.telefono}</TableCell>
                 <TableCell className="space-x-2">
                   <Button
                     onClick={() => {
-                      setOpen(true), setInstitucionSelected(institucion);
+                      setOpen(true), setUniversidadSelected(universidad);
                     }}
                     size="sm"
                   >
@@ -103,10 +103,10 @@ export default function InstitucionesTable() {
                   <CustomDialog triggerText={<Trash2 color="red" />}>
                     <p className="my-4">
                       ¿Está seguro/a que desea eliminar la{" "}
-                      <strong>institución</strong>?
+                      <strong>universidad</strong>?
                     </p>
                     <Button
-                      onClick={() => removeInstitucion(institucion)}
+                      onClick={() => removeUniversidad(universidad)}
                       variant="destructive"
                     >
                       Eliminar

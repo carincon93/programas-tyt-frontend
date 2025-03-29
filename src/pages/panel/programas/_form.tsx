@@ -51,11 +51,10 @@ export default function ProgramaForm({
 
     const result = await createOrUpdatePrograma(programa, formData);
 
-    if (onProgramaCreatedOrUpdated) {
-      onProgramaCreatedOrUpdated(result);
-    }
-
     if (result.ok) {
+      if (onProgramaCreatedOrUpdated) {
+        onProgramaCreatedOrUpdated(result);
+      }
       toast(`Programa ${programa?.id ? "editado" : "creado"} correctamente`);
     }
   };

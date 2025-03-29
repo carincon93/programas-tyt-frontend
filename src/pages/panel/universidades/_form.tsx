@@ -1,30 +1,30 @@
-import type { Institucion } from "@/lib/types";
+import type { Universidad } from "@/lib/types";
 
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Asterisk } from "lucide-react";
-import { createOrUpdateInstitucion } from "@/services/institucion.service";
+import { createOrUpdateUniversidad } from "@/services/universidad.service";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-interface InstitucionFormProps {
-  institucion?: Institucion;
-  onInstitucionCreatedOrUpdated?: (result: {
+interface UniversidadFormProps {
+  universidad?: Universidad;
+  onUniversidadCreatedOrUpdated?: (result: {
     ok: boolean;
     success?: string;
     error?: string;
   }) => Promise<void>;
 }
 
-export default function InstitucionForm({
-  institucion,
-  onInstitucionCreatedOrUpdated,
-}: InstitucionFormProps) {
-  const [formData, setFormData] = useState<Partial<Institucion>>({
-    nombre: institucion?.nombre || "",
-    direccion: institucion?.direccion || "",
-    telefono: institucion?.telefono || "",
+export default function UniversidadForm({
+  universidad,
+  onUniversidadCreatedOrUpdated,
+}: UniversidadFormProps) {
+  const [formData, setFormData] = useState<Partial<Universidad>>({
+    nombre: universidad?.nombre || "",
+    direccion: universidad?.direccion || "",
+    telefono: universidad?.telefono || "",
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -39,19 +39,19 @@ export default function InstitucionForm({
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const result = await createOrUpdateInstitucion(institucion, formData);
+    const result = await createOrUpdateUniversidad(universidad, formData);
 
     if (result.ok) {
-      if (onInstitucionCreatedOrUpdated) {
-        onInstitucionCreatedOrUpdated(result);
+      if (onUniversidadCreatedOrUpdated) {
+        onUniversidadCreatedOrUpdated(result);
       }
       toast(
-        `Institución ${institucion?.id ? "editada" : "creada"} correctamente`
+        `Universidad ${universidad?.id ? "editada" : "creada"} correctamente`
       );
     }
   };
 
-  console.log(institucion);
+  console.log(universidad);
 
   return (
     <form onSubmit={submit} className="space-y-8">

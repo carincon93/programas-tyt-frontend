@@ -2,11 +2,23 @@ export interface User {
   id: number;
   nombres: string;
   apellidos: string;
-  correo: string;
+  email: string;
+  password: string;
   telefono: string;
   direccion: string;
   tipoDocumento: string;
   numeroDocumento: string;
+  rolId: number;
+
+  rol: Rol;
+}
+
+export interface Rol {
+  id: number;
+  nombre: string;
+  descripcion: string;
+
+  users: User[];
 }
 
 export interface Universidad {
@@ -114,6 +126,6 @@ export interface Asistencia {
 }
 
 export interface Login {
-  correo: string;
+  email: string;
   password: string;
 }

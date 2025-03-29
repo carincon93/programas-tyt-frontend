@@ -17,6 +17,7 @@ interface CustomDialogProps {
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   triggerText: string | ReactNode;
   title?: string;
+  dialogContentClassName?: string;
   description?: string;
   children: ReactNode;
 }
@@ -26,6 +27,7 @@ export default function CustomDialog({
   setOpen,
   triggerText,
   title,
+  dialogContentClassName,
   description,
   children,
 }: CustomDialogProps) {
@@ -34,7 +36,7 @@ export default function CustomDialog({
       <DialogTrigger asChild>
         <Button size="sm">{triggerText}</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className={dialogContentClassName}>
         <DialogHeader className="-top-[10px] relative">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

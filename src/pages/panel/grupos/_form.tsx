@@ -30,7 +30,7 @@ export default function GrupoForm({
   grupo,
   onGrupoCreatedOrUpdated,
 }: GrupoFormProps) {
-  const [programas, setProgramas] = useState<Programa[]>([])
+  const [programas, setProgramas] = useState<Programa[]>([]);
   const [formData, setFormData] = useState<Partial<Grupo>>({
     codigoGrupo: grupo?.codigoGrupo || "",
     programaId: grupo?.programaId || undefined,
@@ -50,23 +50,22 @@ export default function GrupoForm({
 
     const result = await createOrUpdateGrupo(grupo, formData);
 
-    if (onGrupoCreatedOrUpdated) {
-      onGrupoCreatedOrUpdated(result);
-    }
-
     if (result.ok) {
+      if (onGrupoCreatedOrUpdated) {
+        onGrupoCreatedOrUpdated(result);
+      }
       toast(`Grupo ${grupo?.id ? "editado" : "creado"} correctamente`);
     }
   };
 
   const fetchProgramas = async () => {
-    const response = await fetchProgramasData()
-    if (response.data) setProgramas(response.data)
-  }
+    const response = await fetchProgramasData();
+    if (response.data) setProgramas(response.data);
+  };
 
   useEffect(() => {
     fetchProgramas();
-  }, [])
+  }, []);
 
   console.log(grupo);
 

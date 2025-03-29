@@ -1,10 +1,7 @@
-import type { Institucion } from "@/lib/types";
-import {
-  fetchInstitucionesData,
-  deleteInstitucion,
-} from "@/services/institucion.service";
+import type { Rol } from "@/lib/types";
+import { fetchRolesData, deleteRol } from "@/services/rol.service";
 import { useEffect, useState } from "react";
-import InstitucionForm from "./_form";
+import RolForm from "./_form";
 import {
   Table,
   TableBody,
@@ -18,41 +15,41 @@ import { Edit2, PlusCircle, Trash2 } from "lucide-react";
 import CustomDialog from "@/components/CustomDialog";
 import { toast } from "sonner";
 
-export default function InstitucionesTable() {
+export default function RolesTable() {
   const [open, setOpen] = useState<boolean>(false);
-  const [institucionSelected, setInstitucionSelected] = useState<Institucion>();
-  const [instituciones, setInstituciones] = useState<Institucion[]>([]);
+  const [rolSelected, setRolSelected] = useState<Rol>();
+  const [roles, setRoles] = useState<Rol[]>([]);
 
-  const fetchInstituciones = async () => {
-    const response = await fetchInstitucionesData();
-    if (response.data) setInstituciones(response.data);
+  const fetchRoles = async () => {
+    const response = await fetchRolesData();
+    if (response.data) setRoles(response.data);
   };
 
-  const refreshInstituciones = async () => {
-    fetchInstituciones();
-    setInstitucionSelected(undefined);
+  const refreshRoles = async () => {
+    fetchRoles();
+    setRolSelected(undefined);
     setOpen(false);
   };
 
-  const removeInstitucion = async (institucion: Institucion) => {
-    const response = await deleteInstitucion(institucion);
+  const removeRol = async (rol: Rol) => {
+    const response = await deleteRol(rol);
     if (response.ok) {
-      refreshInstituciones();
-      toast("Institución eliminada correctamente");
+      refreshRoles();
+      toast("Rol eliminado correctamente");
     }
   };
 
   useEffect(() => {
     if (!open) {
-      setInstitucionSelected(undefined);
+      setRolSelected(undefined);
     }
   }, [open]);
 
   useEffect(() => {
-    fetchInstituciones();
+    fetchRoles();
   }, []);
 
-  console.log(instituciones);
+  console.log(roles);
 
   return (
     <div>
@@ -61,16 +58,16 @@ export default function InstitucionesTable() {
           triggerText={
             <>
               <PlusCircle />
-              Añadir institución
+              Añadir rol
             </>
           }
           open={open}
           setOpen={setOpen}
         >
-          <InstitucionForm
-            key={institucionSelected?.id}
-            institucion={institucionSelected}
-            onInstitucionCreatedOrUpdated={refreshInstituciones}
+          <RolForm
+            key={rolSelected?.id}
+            rol={rolSelected}
+            onRolCreatedOrUpdated={refreshRoles}
           />
         </CustomDialog>
       </div>
@@ -79,22 +76,20 @@ export default function InstitucionesTable() {
         <TableHeader>
           <TableRow>
             <TableHead className="text-left">Nombre</TableHead>
-            <TableHead className="text-left">Dirección</TableHead>
-            <TableHead className="text-left">Teléfono</TableHead>
+            <TableHead className="text-left">Descripción</TableHead>
             <TableHead className="text-right w-[100px]">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {instituciones.length > 0 ? (
-            instituciones.map((institucion) => (
-              <TableRow key={institucion.id}>
-                <TableCell>{institucion.nombre}</TableCell>
-                <TableCell>{institucion.direccion}</TableCell>
-                <TableCell>{institucion.telefono}</TableCell>
+          {roles.length > 0 ? (
+            roles.map((rol) => (
+              <TableRow key={rol.id}>
+                <TableCell>{rol.nombre}</TableCell>
+                <TableCell>{rol.descripcion}</TableCell>
                 <TableCell className="space-x-2">
                   <Button
                     onClick={() => {
-                      setOpen(true), setInstitucionSelected(institucion);
+                      setOpen(true), setRolSelected(rol);
                     }}
                     size="sm"
                   >
@@ -102,11 +97,10 @@ export default function InstitucionesTable() {
                   </Button>
                   <CustomDialog triggerText={<Trash2 color="red" />}>
                     <p className="my-4">
-                      ¿Está seguro/a que desea eliminar la{" "}
-                      <strong>institución</strong>?
+                      ¿Está seguro/a que desea eliminar el <strong>rol</strong>?
                     </p>
                     <Button
-                      onClick={() => removeInstitucion(institucion)}
+                      onClick={() => removeRol(rol)}
                       variant="destructive"
                     >
                       Eliminar

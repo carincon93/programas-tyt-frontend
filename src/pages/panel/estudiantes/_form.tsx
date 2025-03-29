@@ -38,11 +38,12 @@ export default function EstudianteForm({
       id: estudiante?.user?.id,
       nombres: estudiante?.user?.nombres || "",
       apellidos: estudiante?.user?.apellidos || "",
-      correo: estudiante?.user?.correo || "",
+      email: estudiante?.user?.email || "",
       direccion: estudiante?.user?.direccion || "",
       tipoDocumento: estudiante?.user?.tipoDocumento || "",
       numeroDocumento: estudiante?.user?.numeroDocumento || "",
       telefono: estudiante?.user?.telefono || "",
+      password: estudiante?.user?.password || "",
     },
     grupoId: estudiante?.grupoId,
     institucionId: estudiante?.institucionId,
@@ -76,11 +77,10 @@ export default function EstudianteForm({
 
     const result = await createOrUpdateEstudiante(estudiante, formData);
 
-    if (onEstudianteCreatedOrUpdated) {
-      onEstudianteCreatedOrUpdated(result);
-    }
-
     if (result.ok) {
+      if (onEstudianteCreatedOrUpdated) {
+        onEstudianteCreatedOrUpdated(result);
+      }
       toast(
         `Estudiante ${estudiante?.id ? "editado" : "creado"} correctamente`
       );
@@ -124,18 +124,34 @@ export default function EstudianteForm({
       </fieldset>
 
       <fieldset>
-        <Label htmlFor="correo" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="email" className="flex items-center gap-1 mb-4">
           Correo electrónico <Asterisk size={12} strokeWidth={1} />
         </Label>
         <Input
-          id="correo"
-          name="correo"
+          id="email"
+          name="email"
           type="email"
-          value={formData.user?.correo}
+          value={formData.user?.email}
           onChange={handleChange}
           required
         />
       </fieldset>
+
+      {!estudiante && (
+        <fieldset>
+          <Label htmlFor="password" className="flex items-center gap-1 mb-4">
+            Contraseña <Asterisk size={12} strokeWidth={1} />
+          </Label>
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            value={formData.user?.password}
+            onChange={handleChange}
+            required
+          />
+        </fieldset>
+      )}
 
       <fieldset>
         <Label htmlFor="direccion" className="flex items-center gap-1 mb-4">
@@ -218,58 +234,33 @@ export default function EstudianteForm({
           Institución <Asterisk size={12} strokeWidth={1} />
         </Label>
 
-        <Select
-          name="institucionId"
-          onValueChange={(value) =>
-            setFormData((prev) => ({ ...prev, institucionId: +value }))
-          }
-          defaultValue={formData.institucionId?.toString()}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Seleccione una opción" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {instituciones.map((institucion) => (
-                <SelectItem
-                  key={institucion.id}
-                  value={institucion.id.toString()}
-                >
-                  {institucion.nombre}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </fieldset>
-
-      <fieldset>
-        <Label htmlFor="grupoId" className="flex items-center gap-1 mb-4">
-          Grupo / Programa <Asterisk size={12} strokeWidth={1} />
-        </Label>
-
-        <Select
-          name="grupoId"
-          onValueChange={(value) =>
-            setFormData((prev) => ({ ...prev, grupoId: +value }))
-          }
-          defaultValue={formData?.grupoId?.toString()}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Seleccione una opción" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {grupos.map((grupo) => (
-                <SelectItem key={grupo.id} value={grupo.id.toString()}>
-                  {grupo.codigoGrupo}
-                  {" / "}
-                  {grupo.programa.nombre}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        {instituciones.length > 0 ? (
+          <Select
+            name="institucionId"
+            onValueChange={(value) =>
+              setFormData((prev) => ({ ...prev, institucionId: +value }))
+            }
+            defaultValue={formData.institucionId?.toString()}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccione una opción" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+          {instituciones.map((institucion) => (
+            <SelectItem
+              key={institucion.id}
+              value={institucion.id.toString()}
+            >
+              {institucion.nombre}
+            </SelectItem>
+          ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        ) : (
+          <div>No hay datos para mostrar</div>
+        )}
       </fieldset>
 
       <fieldset>
@@ -292,6 +283,35 @@ export default function EstudianteForm({
           }
           required
         />
+      </fieldset>
+
+      <fieldset className="col-span-2">
+        <Label htmlFor="grupoId" className="flex items-center gap-1 mb-4">
+          Grupo / Programa <Asterisk size={12} strokeWidth={1} />
+        </Label>
+
+        <Select
+          name="grupoId"
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, grupoId: +value }))
+          }
+          defaultValue={formData?.grupoId?.toString()}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Seleccione una opción" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {grupos.map((grupo) => (
+                <SelectItem key={grupo.id} value={grupo.id.toString()}>
+                  {grupo.codigoGrupo.slice(0, 20)}
+                  {" / "}
+                  {grupo.programa.nombre}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </fieldset>
 
       <div className="col-span-2">

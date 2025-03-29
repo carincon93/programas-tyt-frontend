@@ -63,11 +63,10 @@ export default function AsignaturaHorarioForm({
       formData
     );
 
-    if (onAsignaturaHorarioCreatedOrUpdated) {
-      onAsignaturaHorarioCreatedOrUpdated(result);
-    }
-
     if (result.ok) {
+      if (onAsignaturaHorarioCreatedOrUpdated) {
+        onAsignaturaHorarioCreatedOrUpdated(result);
+      }
       toast(
         `Asignatura ${
           asignaturaGrupo?.id ? "editada" : "agendada"

@@ -56,11 +56,11 @@ export default function NotaForm({
       formData
     );
 
-    if (onNotaCreatedOrUpdated) {
-      onNotaCreatedOrUpdated(result);
-    }
     if (result.ok)
-      toast(`Nota ${nota?.id ? "editada" : "creada"} correctamente`);
+      if (onNotaCreatedOrUpdated) {
+        onNotaCreatedOrUpdated(result);
+      }
+    toast(`Nota ${nota?.id ? "editada" : "creada"} correctamente`);
   };
 
   console.log(nota);

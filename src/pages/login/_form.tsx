@@ -5,13 +5,16 @@ import { Asterisk } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { login } from "@/services/auth.service";
+import { toast } from "sonner";
+import { setUser } from "@/store/auth.store";
 
 interface LoginFormProps {}
 
 export default function LoginForm({}: LoginFormProps) {
   const [formData, setFormData] = useState<Partial<Login>>({
-    correo: "administradortyt@umanizales.edu.co",
-    password: "12345678",
+    email: "",
+    password: "",
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -26,29 +29,26 @@ export default function LoginForm({}: LoginFormProps) {
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // const result = await createOrUpdateLogin(asignatura, formData);
+    const result = await login(formData);
 
-    // if (onLoginCreatedOrUpdated) {
-    //   onLoginCreatedOrUpdated(result);
-    // }
-    // if (result.ok) {
-    //   toast(
-    //     `Login ${asignatura?.id ? "editada" : "creada"} correctamente`
-    //   );
-    // }
+    if (result.ok) {
+      setUser(result.data.user);
+      toast(`Ha iniciado sesión correctamente.`);
+      window.location.href = "/panel/inicio";
+    }
   };
 
   return (
     <form onSubmit={submit} className="space-y-6">
       <fieldset>
-        <Label htmlFor="correo" className="flex items-center gap-1 mb-4">
+        <Label htmlFor="email" className="flex items-center gap-1 mb-4">
           Correo electrónico <Asterisk size={12} strokeWidth={1} />
         </Label>
         <Input
-          id="correo"
-          name="correo"
+          id="email"
+          name="email"
           type="email"
-          value={formData.correo}
+          value={formData.email}
           onChange={handleChange}
           required
         />
@@ -68,15 +68,9 @@ export default function LoginForm({}: LoginFormProps) {
         />
       </fieldset>
 
-      {/* <Button type="submit" className="w-full mt-4 bg-blue-500">
+      <Button type="submit" className="w-full mt-4 bg-blue-500">
         Iniciar sesión
-      </Button> */}
-      <a
-        href="/panel"
-        className="bg-blue-600 hover:opacity-80 text-center p-2 rounded-md text-white block"
-      >
-        Iniciar sesión
-      </a>
+      </Button>
     </form>
   );
 }
