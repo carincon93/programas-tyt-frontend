@@ -29,6 +29,8 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   const refreshToken = context.cookies.get("refresh_token")?.value || "";
 
   const authUser = await getProfile(authToken);
+  console.log(authUser);
+
   // Guardar el authUser en locals
   context.locals.authUser = authUser || null;
 
