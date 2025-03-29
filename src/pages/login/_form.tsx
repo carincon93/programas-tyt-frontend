@@ -34,7 +34,10 @@ export default function LoginForm({}: LoginFormProps) {
     if (result.ok) {
       setUser(result.data.user);
       toast(`Ha iniciado sesión correctamente.`);
-      window.location.href = "/panel/inicio";
+
+      setTimeout(() => {
+        window.location.href = "/panel/inicio";
+      }, 10000);
     }
   };
 
