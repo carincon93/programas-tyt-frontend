@@ -88,6 +88,9 @@ export const refreshToken = async () => {
 
 export const getToken = async () => {
   const response = await fetch(`${URL_BACKEND}/auth/token`, {
+    headers: {
+      Cookie: document.cookie,
+    },
     credentials: "include", // 🔥 Necesario para enviar cookies
   });
 
