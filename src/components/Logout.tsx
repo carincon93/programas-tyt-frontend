@@ -7,7 +7,7 @@ export default function Logout() {
     const response = await logout();
 
     if (response.ok) {
-      window.location.href = "/panel";
+      window.location.href = "/login";
     }
   };
   return (
