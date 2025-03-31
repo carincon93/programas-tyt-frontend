@@ -29,34 +29,50 @@ export default function ListaAsistenciasTable() {
       <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-left">Estudiante</TableHead>
-            <TableHead className="text-left">Asignatura</TableHead>
-            <TableHead className="text-left">Profesor</TableHead>
-            <TableHead className="text-left">¿Asistió?</TableHead>
-            <TableHead className="text-left">Observación</TableHead>
-            <TableHead className="text-left">Fecha</TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Estudiante
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Asignatura
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Profesor
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              ¿Asistió?
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Observación
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Fecha
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {asistencias.length > 0 ? (
             asistencias.map((asistencia) => (
               <TableRow key={asistencia.id}>
-                <TableCell>
+                <TableCell className="border">
                   {asistencia.estudiante.user.nombres +
                     " " +
                     asistencia.estudiante.user.apellidos}
                 </TableCell>
-                <TableCell>
+                <TableCell className="border">
                   {asistencia.asignaturaProfesor.asignatura.nombre}
                 </TableCell>
-                <TableCell>
+                <TableCell className="border">
                   {asistencia.asignaturaProfesor.profesor.user.nombres +
                     " " +
                     asistencia.asignaturaProfesor.profesor.user.apellidos}
                 </TableCell>
-                <TableCell>{asistencia.asiste ? "Si" : "No"}</TableCell>
-                <TableCell>{asistencia.observacion}</TableCell>
-                <TableCell>{asistencia.fecha}</TableCell>
+                <TableCell className="border">
+                  {asistencia.asiste ? "Si" : "No"}
+                </TableCell>
+                <TableCell className="border">
+                  {asistencia.observacion}
+                </TableCell>
+                <TableCell className="border">{asistencia.fecha}</TableCell>
               </TableRow>
             ))
           ) : (

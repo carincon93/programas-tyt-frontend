@@ -12,11 +12,26 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import CustomDialog from "@/components/CustomDialog";
-import { Edit2, ExternalLink, PlusCircle, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Edit2,
+  EllipsisVertical,
+  ExternalLink,
+  PlusCircle,
+  Trash2,
+  Users,
+} from "lucide-react";
 import { toast } from "sonner";
 
 export default function GruposTable() {
   const [open, setOpen] = useState<boolean>(false);
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [grupoSelected, setGrupoSelected] = useState<Grupo>();
   const [grupos, setGrupos] = useState<Grupo[]>([]);
 
@@ -29,10 +44,13 @@ export default function GruposTable() {
     fetchGrupos();
     setGrupoSelected(undefined);
     setOpen(false);
+    setOpenDelete(false);
   };
 
-  const removeGrupo = async (grupo: Grupo) => {
-    const response = await deleteGrupo(grupo);
+  const removeGrupo = async () => {
+    if (!grupoSelected) return;
+
+    const response = await deleteGrupo(grupoSelected);
     if (response.ok) {
       refreshGrupos();
       toast("Grupo eliminado correctamente");
@@ -56,10 +74,10 @@ export default function GruposTable() {
       <div>
         <CustomDialog
           triggerText={
-            <>
+            <Button>
               <PlusCircle />
               Añadir grupo
-            </>
+            </Button>
           }
           open={open}
           setOpen={setOpen}
@@ -70,52 +88,83 @@ export default function GruposTable() {
             onGrupoCreatedOrUpdated={refreshGrupos}
           />
         </CustomDialog>
+
+        <CustomDialog
+          triggerText={<div className="hidden"></div>}
+          open={openDelete}
+          setOpen={setOpenDelete}
+        >
+          <p className="my-4">
+            ¿Está seguro/a que desea eliminar el grupo{" "}
+            <strong>{grupoSelected?.codigoGrupo}</strong>?
+          </p>
+          <Button onClick={() => removeGrupo()} variant="destructive">
+            Eliminar
+          </Button>
+        </CustomDialog>
       </div>
       <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-left">Código del grupo</TableHead>
-            <TableHead className="text-left">Programa</TableHead>
-            <TableHead className="text-right w-[100px]">Acciones</TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Código del grupo
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Programa
+            </TableHead>
+            <TableHead className="text-center font-bold w-[100px] text-black">
+              Acciones
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {grupos.length > 0 ? (
             grupos.map((grupo) => (
               <TableRow key={grupo.id}>
-                <TableCell>{grupo.codigoGrupo}</TableCell>
-                <TableCell>{grupo.programa.nombre}</TableCell>
+                <TableCell className="border">{grupo.codigoGrupo}</TableCell>
+                <TableCell className="border">
+                  {grupo.programa.nombre}
+                </TableCell>
                 <TableCell className="space-x-2 text-right">
-                  <a
-                    href={`/panel/grupos/${grupo.id}/estudiantes`}
-                    className="inline-flex justify-center items-center gap-1 underline hover:opacity-60"
-                  >
-                    <ExternalLink size={10} className="top-0.5 relative" />
-                    Estudiantes
-                  </a>
-
-                  <div className="space-x-2 mt-4">
-                    <Button
-                      onClick={() => {
-                        setOpen(true), setGrupoSelected(grupo);
-                      }}
-                      size="sm"
-                    >
-                      <Edit2 />
-                    </Button>
-                    <CustomDialog triggerText={<Trash2 color="red" />}>
-                      <p className="my-4">
-                        ¿Está seguro/a que desea eliminar el{" "}
-                        <strong>grupo</strong>?
-                      </p>
-                      <Button
-                        onClick={() => removeGrupo(grupo)}
-                        variant="destructive"
-                      >
-                        Eliminar
-                      </Button>
-                    </CustomDialog>
-                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="p-2 block w-full shadow-sm hover:cursor-pointer hover:bg-slate-100">
+                      <EllipsisVertical size="14px" className="mx-auto" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="bg-white p-4 shadow space-y-2">
+                      <DropdownMenuItem>
+                        <a
+                          href={`/panel/grupos/${grupo.id}/estudiantes`}
+                          className="inline-flex justify-center items-center gap-1 hover:opacity-60"
+                        >
+                          <Users size="14px" />
+                          Estudiantes
+                        </a>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>
+                        <button
+                          onClick={() => {
+                            setOpen(true), setGrupoSelected(grupo);
+                          }}
+                          className="flex items-center gap-2 p-2"
+                        >
+                          <Edit2 size="14px" />
+                          Editar
+                        </button>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <button
+                          onClick={() => {
+                            setOpenDelete(true), setGrupoSelected(grupo);
+                          }}
+                          className="flex items-center gap-2 p-2"
+                        >
+                          <Trash2 color="red" size="14px" />
+                          Eliminar
+                        </button>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))

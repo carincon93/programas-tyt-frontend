@@ -44,6 +44,7 @@ export default function EstudianteForm({
       numeroDocumento: estudiante?.user?.numeroDocumento || "",
       telefono: estudiante?.user?.telefono || "",
       password: estudiante?.user?.password || "",
+      activo: true,
     },
     grupoId: estudiante?.grupoId,
     institucionId: estudiante?.institucionId,
@@ -247,14 +248,14 @@ export default function EstudianteForm({
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-          {instituciones.map((institucion) => (
-            <SelectItem
-              key={institucion.id}
-              value={institucion.id.toString()}
-            >
-              {institucion.nombre}
-            </SelectItem>
-          ))}
+                {instituciones.map((institucion) => (
+                  <SelectItem
+                    key={institucion.id}
+                    value={institucion.id.toString()}
+                  >
+                    {institucion.nombre}
+                  </SelectItem>
+                ))}
               </SelectGroup>
             </SelectContent>
           </Select>

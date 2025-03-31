@@ -46,20 +46,30 @@ export default function GruposTable({ grupoId }: GruposTableProps) {
             <TableHead className="text-left w-[180px]">
               Código del estudiante
             </TableHead>
-            <TableHead className="text-left">Nombre</TableHead>
-            <TableHead className="text-left">Institución</TableHead>
-            <TableHead className="text-right w-[100px]">Acciones</TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Nombre
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Institución
+            </TableHead>
+            <TableHead className="text-center font-bold w-[100px] text-black">
+              Acciones
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {grupo && grupo.estudiantes.length > 0 ? (
             grupo.estudiantes.map((estudiante) => (
               <TableRow key={estudiante.id}>
-                <TableCell>{estudiante.codigoEstudiante}</TableCell>
-                <TableCell>
+                <TableCell className="border">
+                  {estudiante.codigoEstudiante}
+                </TableCell>
+                <TableCell className="border">
                   {estudiante.user.nombres + " " + estudiante.user.apellidos}
                 </TableCell>
-                <TableCell>{estudiante.institucion.nombre}</TableCell>
+                <TableCell className="border">
+                  {estudiante.institucion.nombre}
+                </TableCell>
 
                 <TableCell className="text-right">
                   <a

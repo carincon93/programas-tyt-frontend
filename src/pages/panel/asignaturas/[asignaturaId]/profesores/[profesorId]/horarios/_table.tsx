@@ -82,10 +82,18 @@ export default function HorarioTable({
       <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-left">Fecha</TableHead>
-            <TableHead className="text-left">Programa / Grupo</TableHead>
-            <TableHead className="text-left">Hora inicio / Hora fin</TableHead>
-            <TableHead className="text-right w-[100px]">Acciones</TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Fecha
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Programa / Grupo
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Hora inicio / Hora fin
+            </TableHead>
+            <TableHead className="text-center font-bold w-[100px] text-black">
+              Acciones
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -95,12 +103,12 @@ export default function HorarioTable({
                 {asignaturaProfesor.horarios.length > 0 ? (
                   asignaturaProfesor.horarios.map((horario) => (
                     <TableRow key={horario.id}>
-                      <TableCell>{horario.fecha}</TableCell>
-                      <TableCell>
+                      <TableCell className="border">{horario.fecha}</TableCell>
+                      <TableCell className="border">
                         {horario.grupo.programa.nombre} {" / "}
                         {horario.grupo.codigoGrupo}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="border">
                         {horario.horaInicio}
                         {" - "}
                         {horario.horaFin}

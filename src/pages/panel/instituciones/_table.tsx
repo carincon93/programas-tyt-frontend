@@ -14,12 +14,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit2, PlusCircle, Trash2 } from "lucide-react";
 import CustomDialog from "@/components/CustomDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Edit2, EllipsisVertical, PlusCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function InstitucionesTable() {
   const [open, setOpen] = useState<boolean>(false);
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [institucionSelected, setInstitucionSelected] = useState<Institucion>();
   const [instituciones, setInstituciones] = useState<Institucion[]>([]);
 
@@ -32,10 +39,13 @@ export default function InstitucionesTable() {
     fetchInstituciones();
     setInstitucionSelected(undefined);
     setOpen(false);
+    setOpenDelete(false);
   };
 
-  const removeInstitucion = async (institucion: Institucion) => {
-    const response = await deleteInstitucion(institucion);
+  const removeInstitucion = async () => {
+    if (!institucionSelected) return;
+
+    const response = await deleteInstitucion(institucionSelected);
     if (response.ok) {
       refreshInstituciones();
       toast("Institución eliminada correctamente");
@@ -59,10 +69,10 @@ export default function InstitucionesTable() {
       <div>
         <CustomDialog
           triggerText={
-            <>
+            <Button>
               <PlusCircle />
               Añadir institución
-            </>
+            </Button>
           }
           open={open}
           setOpen={setOpen}
@@ -73,45 +83,79 @@ export default function InstitucionesTable() {
             onInstitucionCreatedOrUpdated={refreshInstituciones}
           />
         </CustomDialog>
+
+        <CustomDialog
+          triggerText={<div className="hidden"></div>}
+          open={openDelete}
+          setOpen={setOpenDelete}
+        >
+          <p className="my-4">
+            ¿Está seguro/a que desea eliminar la institución{" "}
+            <strong>{institucionSelected?.nombre}</strong>?
+          </p>
+          <Button onClick={() => removeInstitucion()} variant="destructive">
+            Eliminar
+          </Button>
+        </CustomDialog>
       </div>
 
       <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-left">Nombre</TableHead>
-            <TableHead className="text-left">Dirección</TableHead>
-            <TableHead className="text-left">Teléfono</TableHead>
-            <TableHead className="text-right w-[100px]">Acciones</TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Nombre
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Dirección
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Teléfono
+            </TableHead>
+            <TableHead className="text-center font-bold w-[100px] text-black">
+              Acciones
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {instituciones.length > 0 ? (
             instituciones.map((institucion) => (
               <TableRow key={institucion.id}>
-                <TableCell>{institucion.nombre}</TableCell>
-                <TableCell>{institucion.direccion}</TableCell>
-                <TableCell>{institucion.telefono}</TableCell>
+                <TableCell className="border">{institucion.nombre}</TableCell>
+                <TableCell className="border">
+                  {institucion.direccion}
+                </TableCell>
+                <TableCell className="border">{institucion.telefono}</TableCell>
                 <TableCell className="space-x-2">
-                  <Button
-                    onClick={() => {
-                      setOpen(true), setInstitucionSelected(institucion);
-                    }}
-                    size="sm"
-                  >
-                    <Edit2 />
-                  </Button>
-                  <CustomDialog triggerText={<Trash2 color="red" />}>
-                    <p className="my-4">
-                      ¿Está seguro/a que desea eliminar la{" "}
-                      <strong>institución</strong>?
-                    </p>
-                    <Button
-                      onClick={() => removeInstitucion(institucion)}
-                      variant="destructive"
-                    >
-                      Eliminar
-                    </Button>
-                  </CustomDialog>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="p-2 block w-full shadow-sm hover:cursor-pointer hover:bg-slate-100">
+                      <EllipsisVertical size="14px" className="mx-auto" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="bg-white p-4 shadow space-y-2">
+                      <DropdownMenuItem>
+                        <button
+                          onClick={() => {
+                            setOpen(true), setInstitucionSelected(institucion);
+                          }}
+                          className="flex items-center gap-2 p-2"
+                        >
+                          <Edit2 size="14px" />
+                          Editar
+                        </button>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <button
+                          onClick={() => {
+                            setOpenDelete(true),
+                              setInstitucionSelected(institucion);
+                          }}
+                          className="flex items-center gap-2 p-2"
+                        >
+                          <Trash2 color="red" size="14px" />
+                          Eliminar
+                        </button>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))

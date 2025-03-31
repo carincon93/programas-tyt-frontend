@@ -53,7 +53,7 @@ export default function RolesTable() {
 
   return (
     <div>
-      <div>
+      {/* <div>
         <CustomDialog
           triggerText={
             <>
@@ -70,23 +70,29 @@ export default function RolesTable() {
             onRolCreatedOrUpdated={refreshRoles}
           />
         </CustomDialog>
-      </div>
+      </div> */}
 
       <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-left">Nombre</TableHead>
-            <TableHead className="text-left">Descripción</TableHead>
-            <TableHead className="text-right w-[100px]">Acciones</TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Nombre
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Descripción
+            </TableHead>
+            {/* <TableHead className="text-center font-bold w-[100px] text-black">
+              Acciones
+            </TableHead> */}
           </TableRow>
         </TableHeader>
         <TableBody>
           {roles.length > 0 ? (
             roles.map((rol) => (
               <TableRow key={rol.id}>
-                <TableCell>{rol.nombre}</TableCell>
-                <TableCell>{rol.descripcion}</TableCell>
-                <TableCell className="space-x-2">
+                <TableCell className="border">{rol.nombre}</TableCell>
+                <TableCell className="border">{rol.descripcion}</TableCell>
+                {/* <TableCell className="space-x-2">
                   <Button
                     onClick={() => {
                       setOpen(true), setRolSelected(rol);
@@ -106,12 +112,12 @@ export default function RolesTable() {
                       Eliminar
                     </Button>
                   </CustomDialog>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={4}>No hay datos para mostrar</TableCell>
+              <TableCell colSpan={2}>No hay datos para mostrar</TableCell>
             </TableRow>
           )}
         </TableBody>

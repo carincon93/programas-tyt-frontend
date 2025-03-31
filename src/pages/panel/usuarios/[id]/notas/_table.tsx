@@ -59,24 +59,30 @@ export default function NotasTable({ estudianteId }: NotasTableProps) {
       <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-left">Asignatura</TableHead>
-            <TableHead className="text-left">Profesor</TableHead>
-            <TableHead className="text-left">Nota</TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Asignatura
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Profesor
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Nota
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {notas.length > 0 ? (
             notas.map((nota) => (
               <TableRow key={nota.id}>
-                <TableCell>
+                <TableCell className="border">
                   {nota.asignaturaProfesor.asignatura.nombre}
                 </TableCell>
-                <TableCell>
+                <TableCell className="border">
                   {nota.asignaturaProfesor.profesor.user.nombres +
                     " " +
                     nota.asignaturaProfesor.profesor.user.apellidos}
                 </TableCell>
-                <TableCell>{nota.nota}</TableCell>
+                <TableCell className="border">{nota.nota}</TableCell>
               </TableRow>
             ))
           ) : (

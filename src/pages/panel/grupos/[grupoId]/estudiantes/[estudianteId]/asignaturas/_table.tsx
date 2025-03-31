@@ -63,26 +63,38 @@ export default function EstudianteAsignaturasTable({
       <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-left">Asignatura</TableHead>
-            <TableHead className="text-left">Profesor</TableHead>
-            <TableHead className="text-left">Fecha</TableHead>
-            <TableHead className="text-left">Hora inicio / Hora fin</TableHead>
-            <TableHead className="text-right w-[100px]">Acciones</TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Asignatura
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Profesor
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Fecha
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Hora inicio / Hora fin
+            </TableHead>
+            <TableHead className="text-center font-bold w-[100px] text-black">
+              Acciones
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {asignaturasGrupo.length > 0 ? (
             asignaturasGrupo.map((asignaturaGrupo) => (
               <TableRow key={asignaturaGrupo.id}>
-                <TableCell>
+                <TableCell className="border">
                   {asignaturaGrupo.asignaturaProfesor.asignatura.nombre}
                 </TableCell>
-                <TableCell>
+                <TableCell className="border">
                   {asignaturaGrupo.asignaturaProfesor.profesor.user.nombres}{" "}
                   {asignaturaGrupo.asignaturaProfesor.profesor.user.apellidos}
                 </TableCell>
-                <TableCell>{asignaturaGrupo.fecha}</TableCell>
-                <TableCell>
+                <TableCell className="border">
+                  {asignaturaGrupo.fecha}
+                </TableCell>
+                <TableCell className="border">
                   {asignaturaGrupo.horaInicio + " - " + asignaturaGrupo.horaFin}
                 </TableCell>
                 <TableCell className="space-y-2">

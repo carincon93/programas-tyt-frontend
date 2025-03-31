@@ -29,32 +29,42 @@ export default function HorariosTable() {
       <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-left">Fecha</TableHead>
-            <TableHead className="text-left">Hora inicio / Hora fin</TableHead>
-            <TableHead className="text-left">Asignatura</TableHead>
-            <TableHead className="text-left">Profesor</TableHead>
-            <TableHead className="text-left">Programa / Grupo</TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Fecha
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Hora inicio / Hora fin
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Asignatura
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Profesor
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Programa / Grupo
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {horarios.length > 0 ? (
             horarios.map((horario) => (
               <TableRow key={horario.id}>
-                <TableCell>{horario.fecha}</TableCell>
-                <TableCell>
+                <TableCell className="border">{horario.fecha}</TableCell>
+                <TableCell className="border">
                   {horario.horaInicio}
                   {" - "}
                   {horario.horaFin}
                 </TableCell>
-                <TableCell>
+                <TableCell className="border">
                   {horario.asignaturaProfesor.asignatura.nombre}
                 </TableCell>
-                <TableCell>
+                <TableCell className="border">
                   {horario.asignaturaProfesor.profesor.user.nombres +
                     " " +
                     horario.asignaturaProfesor.profesor.user.apellidos}
                 </TableCell>
-                <TableCell>
+                <TableCell className="border">
                   {horario.grupo.programa.nombre} {" / "}
                   {horario.grupo.codigoGrupo}
                 </TableCell>
