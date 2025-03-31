@@ -18,9 +18,11 @@ export const login = async (
       credentials: "include",
     });
 
+    const result = await response.json();
+
     return {
-      ok: true,
-      data: response.json(),
+      ok: result.statusCode === 200,
+      data: result,
       error: "Error al iniciar sesión",
     };
   } catch (error) {
