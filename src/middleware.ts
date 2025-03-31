@@ -148,14 +148,14 @@ const getRefreshToken = async (
       context.cookies.set("auth_token", data.tokens.accessToken, {
         httpOnly: true,
         secure: false,
-        sameSite: "lax",
+        sameSite: "none",
         path: "/",
       });
 
       context.cookies.set("refresh_token", data.tokens.refreshToken, {
         httpOnly: true,
         secure: false,
-        sameSite: "lax",
+        sameSite: "none",
         path: "/",
       });
     }
@@ -172,7 +172,7 @@ const getRefreshToken = async (
     //       context.cookies.set(cookieName.trim(), cookieValue.trim(), {
     //         httpOnly: true,
     //         secure: false,
-    //         sameSite: "lax",
+    //         sameSite: "none",
     //         path: "/",
     //       });
     //     }
