@@ -149,23 +149,33 @@ export default function EstudianteNotasTable({
       <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-left">Asignatura</TableHead>
-            <TableHead className="text-left">Nota</TableHead>
-            <TableHead className="text-left">Fecha</TableHead>
-            <TableHead className="text-left">Observación</TableHead>
-            <TableHead className="text-right w-[100px]">Acciones</TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Asignatura
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Nota
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Fecha
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Observación
+            </TableHead>
+            <TableHead className="text-center font-bold w-[100px] text-black">
+              Acciones
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {notas.length > 0 ? (
             notas.map((nota) => (
               <TableRow key={nota.id}>
-                <TableCell>
+                <TableCell className="border">
                   {nota.asignaturaProfesor.asignatura.nombre}
                 </TableCell>
-                <TableCell>{nota.nota}</TableCell>
-                <TableCell>{nota.fecha}</TableCell>
-                <TableCell>{nota.observacion}</TableCell>
+                <TableCell className="border">{nota.nota}</TableCell>
+                <TableCell className="border">{nota.fecha}</TableCell>
+                <TableCell className="border">{nota.observacion}</TableCell>
                 <TableCell className="space-x-2">
                   <Button
                     onClick={() => {

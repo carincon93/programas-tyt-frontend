@@ -31,13 +31,27 @@ export default function LoginForm({}: LoginFormProps) {
 
     const result = await login(formData);
 
-    if (result.ok) {
-      setUser(result.data.user);
-      toast(`Ha iniciado sesión correctamente.`);
+    const { data } = result.data;
 
-      setTimeout(() => {
+    if (result.ok && data.tokens) {
+      const accessToken = data.tokens.accessToken;
+      const refreshToken = data.tokens.refreshToken;
+
+      if (accessToken && refreshToken) {
+        // 🔥 TODO: No usar cuando el dominio no sea el mismo
+
+        document.cookie = `auth_token=${accessToken}; secure: true; httpOnly: true;`;
+        document.cookie = `refresh_token=${refreshToken}; secure: true; httpOnly: true;`;
+
+        // Redirigir al usuario a la página deseada después del inicio de sesión
+        setUser(result.data.user);
+        toast(`Ha iniciado sesión correctamente.`);
         window.location.href = "/panel/inicio";
-      }, 10000);
+      } else {
+        throw new Error("No se recibió un token en la respuesta");
+      }
+    } else {
+      toast(result.error);
     }
   };
 

@@ -104,7 +104,7 @@ const data = Astro.locals;
           }
 
           {
-            data.authUser?.role.includes("ESTUDIANTE") && (
+            data.authUser?.role.includes("ADMIN") && (
               <li>
                 <a
                   href="/panel/estudiantes"
@@ -183,19 +183,25 @@ const data = Astro.locals;
         </ul>
       </div>
       <div class="TopBar p-2 flex items-center justify-between">
-        <div class="flex items-center">
-          <a href="/panel">
+        <div>
+          <a href="/panel" class="flex items-center">
             <img
               src="/Logo-UManizales-color.svg"
               alt="Logo Universidad de Manizales"
               width={80}
-              class="ml-3 px-4"
+              class="px-4"
+            />
+
+            <img
+              src="/logo-U_en_tu_colegio.png"
+              alt="Logo U en tu colegio"
+              width={80}
             />
           </a>
-          <h1 class="text-2xl font-medium ml-2">
-            Programas Técnicos y Tecnológicos | {title}
-          </h1>
         </div>
+        <h1 class="text-2xl font-medium text-center">
+          Programas Técnicos y Tecnológicos | {title}
+        </h1>
         <div class="flex items-center gap-4">
           <small class="text-gray-500">
             {data.authUser?.email}

@@ -33,9 +33,7 @@ export default function CustomDialog({
 }: CustomDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="sm">{triggerText}</Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{triggerText}</DialogTrigger>
       <DialogContent className={dialogContentClassName}>
         <DialogHeader className="-top-[10px] relative">
           <DialogTitle>{title}</DialogTitle>

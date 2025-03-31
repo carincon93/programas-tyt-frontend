@@ -42,6 +42,8 @@ export default function ProfesorForm({
       tipoDocumento: profesor?.user.tipoDocumento || "",
       numeroDocumento: profesor?.user.numeroDocumento || "",
       telefono: profesor?.user.telefono || "",
+      password: profesor?.user?.password || "",
+      activo: true,
     },
     universidadId: profesor?.universidadId || undefined,
   });

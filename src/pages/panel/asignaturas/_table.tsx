@@ -14,13 +14,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit2, ExternalLink, PlusCircle, Trash2 } from "lucide-react";
+import {
+  Edit2,
+  EllipsisVertical,
+  ExternalLink,
+  PlusCircle,
+  Trash2,
+} from "lucide-react";
 import CustomDialog from "@/components/CustomDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import AsignaturaProfesoresForm from "./_form-profesores";
 import { toast } from "sonner";
 
 export default function AsignaturasTable() {
   const [open, setOpen] = useState<boolean>(false);
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [asignaturaSelected, setAsignaturaSelected] = useState<Asignatura>();
   const [asignaturas, setAsignaturas] = useState<Asignatura[]>([]);
 
@@ -33,10 +46,13 @@ export default function AsignaturasTable() {
     fetchAsignaturas();
     setAsignaturaSelected(undefined);
     setOpen(false);
+    setOpenDelete(false);
   };
 
-  const removeAsignatura = async (asignatura: Asignatura) => {
-    const response = await deleteAsignatura(asignatura);
+  const removeAsignatura = async () => {
+    if (!asignaturaSelected) return;
+
+    const response = await deleteAsignatura(asignaturaSelected);
     if (response.ok) {
       refreshAsignaturas();
       toast("Asignatura eliminada correctamente");
@@ -60,10 +76,10 @@ export default function AsignaturasTable() {
       <div>
         <CustomDialog
           triggerText={
-            <>
+            <Button>
               <PlusCircle />
               Añadir asignatura
-            </>
+            </Button>
           }
           open={open}
           setOpen={setOpen}
@@ -74,23 +90,45 @@ export default function AsignaturasTable() {
             onAsignaturaCreatedOrUpdated={refreshAsignaturas}
           />
         </CustomDialog>
+
+        <CustomDialog
+          triggerText={<div className="hidden"></div>}
+          open={openDelete}
+          setOpen={setOpenDelete}
+        >
+          <p className="my-4">
+            ¿Está seguro/a que desea eliminar la asignatura{" "}
+            <strong>{asignaturaSelected?.nombre}</strong>?
+          </p>
+          <Button onClick={() => removeAsignatura()} variant="destructive">
+            Eliminar
+          </Button>
+        </CustomDialog>
       </div>
       <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
             <TableHead className="text-left w-[110px]">Código</TableHead>
-            <TableHead className="text-left">Nombre</TableHead>
-            <TableHead className="text-left">Profesores</TableHead>
-            <TableHead className="text-right w-[100px]">Acciones</TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Nombre
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Profesores
+            </TableHead>
+            <TableHead className="text-center font-bold w-[100px] text-black">
+              Acciones
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {asignaturas.length > 0 ? (
             asignaturas.map((asignatura) => (
               <TableRow key={asignatura.id}>
-                <TableCell>{asignatura.codigoAsignatura}</TableCell>
-                <TableCell>{asignatura.nombre}</TableCell>
-                <TableCell>
+                <TableCell className="border">
+                  {asignatura.codigoAsignatura}
+                </TableCell>
+                <TableCell className="border">{asignatura.nombre}</TableCell>
+                <TableCell className="border">
                   {asignatura.asignaturaProfesores.map((asignaturaProfesor) => (
                     <div key={asignaturaProfesor.id}>
                       {asignaturaProfesor.profesor.user?.nombres}{" "}
@@ -123,29 +161,37 @@ export default function AsignaturasTable() {
                     </CustomDialog>
                   </div>
                 </TableCell>
-                <TableCell>
-                  <div className="space-x-2 mt-4">
-                    <Button
-                      onClick={() => {
-                        setOpen(true), setAsignaturaSelected(asignatura);
-                      }}
-                      size="sm"
-                    >
-                      <Edit2 />
-                    </Button>
-                    <CustomDialog triggerText={<Trash2 color="red" />}>
-                      <p className="my-4">
-                        ¿Está seguro/a que desea eliminar la{" "}
-                        <strong>asignatura</strong>?
-                      </p>
-                      <Button
-                        onClick={() => removeAsignatura(asignatura)}
-                        variant="destructive"
-                      >
-                        Eliminar
-                      </Button>
-                    </CustomDialog>
-                  </div>
+                <TableCell className="border">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="p-2 block w-full shadow-sm hover:cursor-pointer hover:bg-slate-100">
+                      <EllipsisVertical size="14px" className="mx-auto" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="bg-white p-4 shadow space-y-2">
+                      <DropdownMenuItem>
+                        <button
+                          onClick={() => {
+                            setOpen(true), setAsignaturaSelected(asignatura);
+                          }}
+                          className="flex items-center gap-2 p-2"
+                        >
+                          <Edit2 size="14px" />
+                          Editar
+                        </button>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <button
+                          onClick={() => {
+                            setOpenDelete(true),
+                              setAsignaturaSelected(asignatura);
+                          }}
+                          className="flex items-center gap-2 p-2"
+                        >
+                          <Trash2 color="red" size="14px" />
+                          Eliminar
+                        </button>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))

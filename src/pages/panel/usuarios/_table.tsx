@@ -12,11 +12,18 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import CustomDialog from "@/components/CustomDialog";
-import { Edit2, ExternalLink, PlusCircle, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Edit2, EllipsisVertical, PlusCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function UsersTable() {
   const [open, setOpen] = useState<boolean>(false);
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [userSelected, setUserSelected] = useState<User>();
   const [users, setUsers] = useState<User[]>([]);
 
@@ -29,10 +36,13 @@ export default function UsersTable() {
     fetchUsers();
     setUserSelected(undefined);
     setOpen(false);
+    setOpenDelete(false);
   };
 
-  const removeUser = async (user: User) => {
-    const response = await deleteUser(user);
+  const removeUser = async () => {
+    if (!userSelected) return;
+
+    const response = await deleteUser(userSelected);
     if (response.ok) {
       refreshUsers();
       toast("User eliminado correctamente");
@@ -40,10 +50,10 @@ export default function UsersTable() {
   };
 
   useEffect(() => {
-    if (!open) {
+    if (!open && !openDelete) {
       setUserSelected(undefined);
     }
-  }, [open]);
+  }, [open || openDelete]);
 
   useEffect(() => {
     fetchUsers();
@@ -56,10 +66,10 @@ export default function UsersTable() {
       <div>
         <CustomDialog
           triggerText={
-            <>
+            <Button>
               <PlusCircle />
               Añadir usuario
-            </>
+            </Button>
           }
           open={open}
           setOpen={setOpen}
@@ -70,45 +80,70 @@ export default function UsersTable() {
             onUserCreatedOrUpdated={refreshUsers}
           />
         </CustomDialog>
+
+        <CustomDialog
+          triggerText={<div className="hidden"></div>}
+          open={openDelete}
+          setOpen={setOpenDelete}
+        >
+          <p className="my-4">
+            ¿Está seguro/a que desea eliminar a{" "}
+            <strong>{userSelected?.nombres}</strong>?
+          </p>
+          <Button onClick={() => removeUser()} variant="destructive">
+            Eliminar
+          </Button>
+        </CustomDialog>
       </div>
 
       <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-left">Nombre</TableHead>
-            <TableHead className="text-right w-[180px]">Acciones</TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Nombre
+            </TableHead>
+            <TableHead className="text-center w-[180px] font-bold text-black">
+              Acciones
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {users.length > 0 ? (
             users.map((user) => (
               <TableRow key={user.id}>
-                <TableCell>{user.nombres + " " + user.apellidos}</TableCell>
+                <TableCell className="border">
+                  {user.nombres + " " + user.apellidos}
+                </TableCell>
                 <TableCell className="text-right">
-                  <div>
-                    <div className="space-x-2 mt-4">
-                      <Button
-                        onClick={() => {
-                          setOpen(true), setUserSelected(user);
-                        }}
-                        size="sm"
-                      >
-                        <Edit2 />
-                      </Button>
-                      <CustomDialog triggerText={<Trash2 color="red" />}>
-                        <p className="my-4">
-                          ¿Está seguro/a que desea eliminar el{" "}
-                          <strong>user</strong>?
-                        </p>
-                        <Button
-                          onClick={() => removeUser(user)}
-                          variant="destructive"
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="p-2 block w-full shadow-sm hover:cursor-pointer hover:bg-slate-100">
+                      <EllipsisVertical size="14px" className="mx-auto" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="bg-white p-4 shadow space-y-2">
+                      <DropdownMenuItem>
+                        <button
+                          onClick={() => {
+                            setOpen(true), setUserSelected(user);
+                          }}
+                          className="flex items-center gap-2 p-2"
                         >
+                          <Edit2 size="14px" />
+                          Editar
+                        </button>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <button
+                          onClick={() => {
+                            setUserSelected(user), setOpenDelete(true);
+                          }}
+                          className="flex items-center gap-2 p-2"
+                        >
+                          <Trash2 color="red" size="14px" />
                           Eliminar
-                        </Button>
-                      </CustomDialog>
-                    </div>
-                  </div>
+                        </button>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))

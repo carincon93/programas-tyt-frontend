@@ -20,7 +20,6 @@ import CustomDialog from "@/components/CustomDialog";
 import { toast } from "sonner";
 import { fetchAsignaturaByProfesorIdData } from "@/services/profesor.service";
 
-
 interface EstudianteAsistenciasTableProps {
   asignaturaProfesorId: string | undefined;
   estudianteId: string | undefined;
@@ -90,7 +89,6 @@ export default function EstudianteAsistenciasTable({
 
   return (
     <div>
-     
       <div>
         <span className="bg-blue-400 py-1 px-4 rounded-md text-white">
           <strong>Asignatura:</strong>
@@ -151,23 +149,37 @@ export default function EstudianteAsistenciasTable({
       <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-left">Asignatura</TableHead>
-            <TableHead className="text-left">¿Asistió?</TableHead>
-            <TableHead className="text-left">Fecha</TableHead>
-            <TableHead className="text-left">Observación</TableHead>
-            <TableHead className="text-right w-[100px]">Acciones</TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Asignatura
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              ¿Asistió?
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Fecha
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Observación
+            </TableHead>
+            <TableHead className="text-center font-bold w-[100px] text-black">
+              Acciones
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {asistencias.length > 0 ? (
             asistencias.map((asistencia) => (
               <TableRow key={asistencia.id}>
-                <TableCell>
+                <TableCell className="border">
                   {asistencia.asignaturaProfesor.asignatura.nombre}
                 </TableCell>
-                <TableCell>{asistencia.asiste ? "Si" : "No"}</TableCell>
-                <TableCell>{asistencia.fecha}</TableCell>
-                <TableCell>{asistencia.observacion}</TableCell>
+                <TableCell className="border">
+                  {asistencia.asiste ? "Si" : "No"}
+                </TableCell>
+                <TableCell className="border">{asistencia.fecha}</TableCell>
+                <TableCell className="border">
+                  {asistencia.observacion}
+                </TableCell>
                 <TableCell className="space-x-2">
                   <Button
                     onClick={() => {
