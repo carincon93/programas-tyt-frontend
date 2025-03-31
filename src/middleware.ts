@@ -137,6 +137,7 @@ const getRefreshToken = async (
     const response = await fetch(`${URL_BACKEND}/auth/refresh`, {
       method: "GET",
       headers: {
+        Authorization: `Bearer ${refreshToken}`,
         Cookie: `refresh_token=${refreshToken}`,
       },
       credentials: "include",
