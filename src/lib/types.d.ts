@@ -8,6 +8,7 @@ export interface User {
   direccion: string;
   tipoDocumento: string;
   numeroDocumento: string;
+  activo: boolean;
   rolId: number;
 
   rol: Rol;
