@@ -43,8 +43,8 @@ export default function LoginForm({}: LoginFormProps) {
         const sevenDays = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
         const expires = new Date(Date.now() + sevenDays).toUTCString();
 
-        document.cookie = `auth_token=${accessToken}; secure; httpOnly; sameSite=none; expires=${expires}`;
-        document.cookie = `refresh_token=${refreshToken}; secure; httpOnly; sameSite=none; expires=${expires}`;
+        document.cookie = `auth_token=${accessToken}; expires=${expires}`;
+        document.cookie = `refresh_token=${refreshToken}; expires=${expires}`;
 
         // Redirigir al usuario a la página deseada después del inicio de sesión
         setUser(result.data.user);
