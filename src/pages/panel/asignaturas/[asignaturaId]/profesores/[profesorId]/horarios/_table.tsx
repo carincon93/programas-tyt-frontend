@@ -159,7 +159,16 @@ export default function HorarioTable({
                               </button>
                             </DropdownMenuItem>
                             <DropdownMenuItem>
-                             
+                              <button
+                                onClick={() => {
+                                  setOpenDelete(true),
+                                  setAsignaturaGrupoelected(horario);
+                                }}
+                                className="flex items-center gap-2 p-2"
+                              >
+                                <Trash2 color="red" size="14px" />
+                                Eliminar
+                            </button>
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
