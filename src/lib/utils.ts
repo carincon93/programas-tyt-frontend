@@ -87,9 +87,14 @@ export const refreshToken = async () => {
 };
 
 export const getToken = async () => {
+  const authToken = document.cookie
+  .split('; ')
+  .find(row => row.startsWith('auth_token='))
+  ?.split('=')[1];
+  
   const response = await fetch(`${URL_BACKEND}/auth/token`, {
     headers: {
-      Cookie: document.cookie,
+      'Authorization': `Bearer ${authToken}`
     },
     credentials: "include", // 🔥 Necesario para enviar cookies
   });
