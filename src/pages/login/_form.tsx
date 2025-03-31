@@ -40,8 +40,11 @@ export default function LoginForm({}: LoginFormProps) {
       if (accessToken && refreshToken) {
         // 🔥 TODO: No usar cuando el dominio no sea el mismo
 
-        document.cookie = `auth_token=${accessToken}; secure: true; httpOnly: true; sameSite: none;`;
-        document.cookie = `refresh_token=${refreshToken}; secure: true; httpOnly: true; sameSite: none;`;
+        const sevenDays = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+        const expires = new Date(Date.now() + sevenDays).toUTCString();
+
+        document.cookie = `auth_token=${accessToken}; secure; httpOnly; sameSite=none; expires=${expires}`;
+        document.cookie = `refresh_token=${refreshToken}; secure; httpOnly; sameSite=none; expires=${expires}`;
 
         // Redirigir al usuario a la página deseada después del inicio de sesión
         setUser(result.data.user);

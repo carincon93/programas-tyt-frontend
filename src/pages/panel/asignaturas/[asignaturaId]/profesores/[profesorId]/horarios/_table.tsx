@@ -13,7 +13,13 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import CustomDialog from "@/components/CustomDialog";
-import { Edit2, PlusCircle, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Edit2, EllipsisVertical, PlusCircle, Trash2 } from "lucide-react";
 
 interface HorarioTableProps {
   asignaturaProfesorId: string | undefined;
@@ -25,6 +31,7 @@ export default function HorarioTable({
   profesorId,
 }: HorarioTableProps) {
   const [open, setOpen] = useState<boolean>(false);
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [asignaturaGrupoSelected, setAsignaturaGrupoelected] =
     useState<AsignaturaGrupo>();
 
@@ -43,10 +50,13 @@ export default function HorarioTable({
     fetchHorario();
     setAsignaturaGrupoelected(undefined);
     setOpen(false);
+    setOpenDelete(false);
   };
 
-  const removeAsignaturaGrupo = async (asignaturaGrupo: AsignaturaGrupo) => {
-    const response = await deleteAsignaturaGrupo(asignaturaGrupo);
+  const removeAsignaturaGrupo = async () => {
+    if (!asignaturaGrupoSelected) return;
+
+    const response = await deleteAsignaturaGrupo(asignaturaGrupoSelected);
     if (response.ok) refreshHorario();
   };
 
@@ -62,10 +72,10 @@ export default function HorarioTable({
         {asignaturaProfesorId && (
           <CustomDialog
             triggerText={
-              <>
+              <Button>
                 <PlusCircle />
                 Añadir horario
-              </>
+              </Button>
             }
             open={open}
             setOpen={setOpen}
@@ -78,6 +88,23 @@ export default function HorarioTable({
             />
           </CustomDialog>
         )}
+
+        <CustomDialog
+            triggerText={<div className="hidden"></div>}
+            open={openDelete}
+            setOpen={setOpenDelete}
+          >
+            <p className="my-4">
+              ¿Está seguro/a que desea eliminar el{" "}
+              <strong>horario</strong>?
+            </p>
+            <Button
+              onClick={() => removeAsignaturaGrupo()}
+              variant="destructive"
+            >
+              Eliminar
+            </Button>
+          </CustomDialog>
       </div>
       <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
@@ -115,26 +142,27 @@ export default function HorarioTable({
                       </TableCell>
 
                       <TableCell className="space-x-2">
-                        <Button
-                          onClick={() => {
-                            setOpen(true), setAsignaturaGrupoelected(horario);
-                          }}
-                          size="sm"
-                        >
-                          <Edit2 />
-                        </Button>
-                        <CustomDialog triggerText={<Trash2 color="red" />}>
-                          <p className="my-4">
-                            ¿Está seguro/a que desea eliminar el{" "}
-                            <strong>horario</strong>?
-                          </p>
-                          <Button
-                            onClick={() => removeAsignaturaGrupo(horario)}
-                            variant="destructive"
-                          >
-                            Eliminar
-                          </Button>
-                        </CustomDialog>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger className="p-2 block w-full shadow-sm hover:cursor-pointer hover:bg-slate-100">
+                            <EllipsisVertical size="14px" className="mx-auto" />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="bg-white p-4 shadow space-y-2">
+                            <DropdownMenuItem>
+                              <button
+                                onClick={() => {
+                                  setOpen(true), setAsignaturaGrupoelected(horario);
+                                }}
+                                className="flex items-center gap-2 p-2"
+                              >
+                                <Edit2 size="14px" />
+                                Editar
+                              </button>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                             
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   ))
