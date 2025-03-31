@@ -24,8 +24,8 @@ const ROLE_PERMISSIONS: Record<string, string[]> = {
 };
 
 export const onRequest: MiddlewareHandler = async (context, next) => {
-  // const currentPath = context.url.pathname;
-  // const authToken = context.cookies.get("auth_token")?.value || "";
+  const currentPath = context.url.pathname;
+  const authToken = context.cookies.get("auth_token")?.value || "";
   // const refreshToken = context.cookies.get("refresh_token")?.value || "";
 
 
@@ -36,12 +36,12 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   //   });
   // }
 
-  // const authUser = await getProfile(authToken, 1, currentPath);
-  // console.log(authUser);
+  const authUser = await getProfile(authToken, 1, currentPath);
+  console.log(authUser);
   
 
-  // // Guardar el authUser en locals
-  // context.locals.authUser = authUser || null;
+  // Guardar el authUser en locals
+  context.locals.authUser = authUser || null;
 
   // const responseRefreshToken = await getRefreshToken(context, refreshToken);
 
