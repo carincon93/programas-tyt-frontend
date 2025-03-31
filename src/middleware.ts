@@ -28,7 +28,14 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   const authToken = context.cookies.get("auth_token")?.value || "";
   const refreshToken = context.cookies.get("refresh_token")?.value || "";
 
-  const authUser = await getProfile(authToken);
+  if (currentPath === "/") {
+    return new Response(null, {
+      status: 302,
+      headers: { Location: "/login" },
+    });
+  }
+
+  const authUser = await getProfile(authToken, 1, currentPath);
   console.log(authUser);
 
   // Guardar el authUser en locals
@@ -75,7 +82,8 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
 
 const getProfile = async (
   authToken: string,
-  retries: number = 1
+  retries: number = 1,
+  currentPath?: string
 ): Promise<
   | {
       email: string;
@@ -83,6 +91,10 @@ const getProfile = async (
     }
   | undefined
 > => {
+  if (currentPath === "/login") {
+    return;
+  }
+
   try {
     const response = await fetch(`${URL_BACKEND}/auth/profile`, {
       method: "GET",
@@ -128,22 +140,42 @@ const getRefreshToken = async (
       credentials: "include",
     });
 
-    const setCookieHeaders = response.headers.get("set-cookie");
+    const { data } = await response.json();
 
-    if (setCookieHeaders) {
-      setCookieHeaders.split(",").forEach((cookie) => {
-        const [cookieName, cookieValue] = cookie.split(";")[0].split("=");
+    if (data) {
+      context.cookies.set("auth_token", data.tokens.accessToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: "/",
+      });
 
-        if (cookieName && cookieValue) {
-          context.cookies.set(cookieName.trim(), cookieValue.trim(), {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            path: "/",
-          });
-        }
+      context.cookies.set("refresh_token", data.tokens.refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: "/",
       });
     }
+
+    // 🔥 TODO: Usar cuando el dominio sea el mismo
+
+    // const setCookieHeaders = response.headers.get("set-cookie");
+
+    // if (setCookieHeaders) {
+    //   setCookieHeaders.split(",").forEach((cookie) => {
+    //     const [cookieName, cookieValue] = cookie.split(";")[0].split("=");
+
+    //     if (cookieName && cookieValue) {
+    //       context.cookies.set(cookieName.trim(), cookieValue.trim(), {
+    //         httpOnly: true,
+    //         secure: false,
+    //         sameSite: "lax",
+    //         path: "/",
+    //       });
+    //     }
+    //   });
+    // }
 
     return response;
   } catch (error) {
