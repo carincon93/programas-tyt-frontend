@@ -27,6 +27,7 @@ export interface Universidad {
   nombre: string;
   direccion: string;
   telefono: string;
+  activo: boolean;
 }
 
 export interface Institucion {
@@ -34,12 +35,14 @@ export interface Institucion {
   nombre: string;
   direccion: string;
   telefono: string;
+  activo: boolean;
 }
 
 export interface Grupo {
   id: number;
   codigoGrupo: string;
   programaId: number;
+  activo: boolean;
 
   programa: Programa;
   estudiantes: Estudiante[];
@@ -69,6 +72,7 @@ export interface Asignatura {
   id: number;
   codigoAsignatura: string;
   nombre: string;
+  activo: boolean;
 
   asignaturaProfesores: AsignaturaProfesor[];
 }
@@ -100,6 +104,7 @@ export interface Programa {
   codigoPrograma: string;
   nombre: string;
   universidadId: number;
+  activo: boolean;
 
   universidad: Universidad;
 }

@@ -26,63 +26,65 @@ const ROLE_PERMISSIONS: Record<string, string[]> = {
 export const onRequest: MiddlewareHandler = async (context, next) => {
   const currentPath = context.url.pathname;
   const authToken = context.cookies.get("auth_token")?.value || "";
-  // const refreshToken = context.cookies.get("refresh_token")?.value || "";
+  const refreshToken = context.cookies.get("refresh_token")?.value || "";
 
+  if (currentPath === "/") {
+    return new Response(null, {
+      status: 302,
+      headers: { Location: "/login" },
+    });
+  }
 
-  // if (currentPath === "/") {
-  //   return new Response(null, {
-  //     status: 302,
-  //     headers: { Location: "/login" },
-  //   });
-  // }
+  const authUser = await getProfile(context, authToken, 1, currentPath);
 
-  const authUser = await getProfile(authToken, 1, currentPath);
   console.log(authUser);
-  
 
-  // Guardar el authUser en locals
-  context.locals.authUser = authUser || null;
+  if (authUser) {
+    // Guardar el authUser en locals
+    context.locals.authUser = authUser || null;
 
-  // const responseRefreshToken = await getRefreshToken(context, refreshToken);
+    const responseRefreshToken = await getRefreshToken(context, refreshToken);
 
-  // if (currentPath !== "/login" && responseRefreshToken.status === 401) {
-  //   console.warn("Usuario no autenticado. Redirigiendo a login.");
-  //   return new Response(null, {
-  //     status: 302,
-  //     headers: { Location: "/login" },
-  //   });
-  // }
+    if (currentPath !== "/login" && responseRefreshToken.status === 401) {
+      console.warn("Usuario no autenticado. Redirigiendo a login.");
+      return new Response(null, {
+        status: 302,
+        headers: { Location: "/login" },
+      });
+    }
 
-  // if (responseRefreshToken.ok && currentPath === "/login") {
-  //   console.info("Usuario autenticado. Redirigiendo a panel");
-  //   return new Response(null, {
-  //     status: 302,
-  //     headers: { Location: "/panel/inicio" },
-  //   });
-  // }
+    if (responseRefreshToken.ok && currentPath === "/login") {
+      console.info("Usuario autenticado. Redirigiendo a panel");
+      return new Response(null, {
+        status: 302,
+        headers: { Location: "/panel/inicio" },
+      });
+    }
 
-  // // Validar permisos con rutas dinámicas (por ejemplo, /panel/grupos/1/estudiantes/2)
-  // if (authUser && currentPath.startsWith("/panel")) {
-  //   const allowedPaths = ROLE_PERMISSIONS[authUser.role] || [];
+    // Validar permisos con rutas dinámicas (por ejemplo, /panel/grupos/1/estudiantes/2)
+    if (authUser && currentPath.startsWith("/panel")) {
+      const allowedPaths = ROLE_PERMISSIONS[authUser.role] || [];
 
-  //   // Permitir acceso si la ruta es exactamente una de las permitidas o si es una subruta de ellas
-  //   const hasAccess = allowedPaths.some(
-  //     (path) => currentPath === path || currentPath.startsWith(`${path}/`)
-  //   );
+      // Permitir acceso si la ruta es exactamente una de las permitidas o si es una subruta de ellas
+      const hasAccess = allowedPaths.some(
+        (path) => currentPath === path || currentPath.startsWith(`${path}/`)
+      );
 
-  //   if (!hasAccess) {
-  //     console.warn("Usuario no autorizado para acceder a esta ruta.");
-  //     return new Response(null, {
-  //       status: 302,
-  //       headers: { Location: "/panel/inicio" },
-  //     });
-  //   }
-  // }
+      if (!hasAccess) {
+        console.warn("Usuario no autorizado para acceder a esta ruta.");
+        return new Response(null, {
+          status: 302,
+          headers: { Location: "/panel/inicio" },
+        });
+      }
+    }
+  }
 
   return next();
 };
 
 const getProfile = async (
+  context: APIContext,
   authToken: string,
   retries: number = 1,
   currentPath?: string
@@ -93,9 +95,9 @@ const getProfile = async (
     }
   | undefined
 > => {
-  if (currentPath === "/login") {
-    return;
-  }
+  // if (currentPath === "/login") {
+  //   return;
+  // }
 
   try {
     const response = await fetch(`${URL_BACKEND}/auth/profile`, {
@@ -111,9 +113,25 @@ const getProfile = async (
         "No se ha podido obtener el usuario autenticado, intentando refrescar..."
       );
 
-      const responseAuthUser = await getProfile(authToken, retries - 1);
+      const responseAuthUser = await getProfile(
+        context,
+        authToken,
+        retries - 1
+      );
 
       return responseAuthUser;
+    } else if (retries === 0) {
+      context.cookies.set("auth_token", "delete", {
+        path: "/",
+        expires: new Date(0),
+        maxAge: 0,
+      });
+
+      context.cookies.set("refresh_token", "delete", {
+        path: "/",
+        expires: new Date(0),
+        maxAge: 0,
+      });
     }
 
     if (!response.ok) {
@@ -137,7 +155,6 @@ const getRefreshToken = async (
     const response = await fetch(`${URL_BACKEND}/auth/refresh`, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${refreshToken}`,
         Cookie: `refresh_token=${refreshToken}`,
       },
       credentials: "include",
@@ -173,7 +190,7 @@ const getRefreshToken = async (
     //       context.cookies.set(cookieName.trim(), cookieValue.trim(), {
     //         httpOnly: true,
     //         secure: false,
-    //         sameSite: "none",
+    //         sameSite: "lax",
     //         path: "/",
     //       });
     //     }
