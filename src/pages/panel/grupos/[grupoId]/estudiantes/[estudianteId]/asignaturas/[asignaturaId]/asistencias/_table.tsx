@@ -15,8 +15,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit2, PlusCircle, Trash2 } from "lucide-react";
 import CustomDialog from "@/components/CustomDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Edit2, EllipsisVertical, PlusCircle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { fetchAsignaturaByProfesorIdData } from "@/services/profesor.service";
 
@@ -30,6 +36,7 @@ export default function EstudianteAsistenciasTable({
   estudianteId,
 }: EstudianteAsistenciasTableProps) {
   const [open, setOpen] = useState<boolean>(false);
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [asistenciaSelected, setAsistenciaSelected] = useState<Asistencia>();
   const [asistencias, setAsistencias] = useState<Asistencia[]>([]);
   const [estudiante, setEstudiante] = useState<Estudiante>();
@@ -65,8 +72,10 @@ export default function EstudianteAsistenciasTable({
     setOpen(false);
   };
 
-  const removeAsistencia = async (asistencia: Asistencia) => {
-    const response = await deleteAsistencia(asistencia);
+  const removeAsistencia = async () => {
+    if (!asistenciaSelected) return;
+    
+    const response = await deleteAsistencia(asistenciaSelected);
     if (response.ok) {
       refreshAsistencias();
       toast("Asistencia eliminada correctamente");
@@ -128,10 +137,10 @@ export default function EstudianteAsistenciasTable({
         {estudianteId && asignaturaProfesorId && (
           <CustomDialog
             triggerText={
-              <>
+              <Button>
                 <PlusCircle />
                 Añadir asistencia
-              </>
+              </Button>
             }
             open={open}
             setOpen={setOpen}
@@ -145,6 +154,23 @@ export default function EstudianteAsistenciasTable({
             />
           </CustomDialog>
         )}
+
+        <CustomDialog
+          triggerText={<div className="hidden"></div>}
+          open={openDelete}
+          setOpen={setOpenDelete}
+        >
+          <p className="my-4">
+            ¿Está seguro/a que desea eliminar la{" "}
+            <strong>asistencia</strong>?
+          </p>
+          <Button
+            onClick={() => removeAsistencia()}
+            variant="destructive"
+          >
+            Eliminar
+          </Button>
+        </CustomDialog>
       </div>
       <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
@@ -181,26 +207,36 @@ export default function EstudianteAsistenciasTable({
                   {asistencia.observacion}
                 </TableCell>
                 <TableCell className="space-x-2">
-                  <Button
-                    onClick={() => {
-                      setOpen(true), setAsistenciaSelected(asistencia);
-                    }}
-                    size="sm"
-                  >
-                    <Edit2 />
-                  </Button>
-                  <CustomDialog triggerText={<Trash2 color="red" />}>
-                    <p className="my-4">
-                      ¿Está seguro/a que desea eliminar la{" "}
-                      <strong>asistencia</strong>?
-                    </p>
-                    <Button
-                      onClick={() => removeAsistencia(asistencia)}
-                      variant="destructive"
-                    >
-                      Eliminar
-                    </Button>
-                  </CustomDialog>
+                <DropdownMenu>
+                      <DropdownMenuTrigger className="p-2 block w-full shadow-sm hover:cursor-pointer hover:bg-slate-100">
+                        <EllipsisVertical size="14px" className="mx-auto" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="bg-white p-4 shadow space-y-2">
+                        <DropdownMenuItem>
+                          <button
+                            onClick={() => {
+                              setOpen(true), setAsistenciaSelected(asistencia);
+                            }}
+                            className="flex items-center gap-2 p-2"
+                          >
+                            <Edit2 size="14px" />
+                            Editar
+                          </button>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <button
+                            onClick={() => {
+                              setOpenDelete(true),
+                              setAsistenciaSelected(asistencia);
+                            }}
+                            className="flex items-center gap-2 p-2"
+                          >
+                            <Trash2 color="red" size="14px" />
+                            Eliminar
+                          </button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))

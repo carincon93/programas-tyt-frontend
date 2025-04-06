@@ -15,9 +15,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit2, PlusCircle, Trash2 } from "lucide-react";
 import CustomDialog from "@/components/CustomDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { Edit2, EllipsisVertical, PlusCircle, Trash2 } from "lucide-react";
 import { fetchAsignaturaByProfesorIdData } from "@/services/profesor.service";
 
 interface EstudianteNotasTableProps {
@@ -30,6 +36,7 @@ export default function EstudianteNotasTable({
   estudianteId,
 }: EstudianteNotasTableProps) {
   const [open, setOpen] = useState<boolean>(false);
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [notaSelected, setNotaSelected] = useState<Nota>();
   const [notas, setNotas] = useState<Nota[]>([]);
   const [estudiante, setEstudiante] = useState<Estudiante>();
@@ -63,10 +70,13 @@ export default function EstudianteNotasTable({
     fetchNotasByEstudiante();
     setNotaSelected(undefined);
     setOpen(false);
+    setOpenDelete(false);
   };
 
-  const removeNota = async (nota: Nota) => {
-    const response = await deleteNota(nota);
+  const removeNota = async () => {
+    if (!notaSelected) return;
+
+    const response = await deleteNota(notaSelected);
     if (response.ok) {
       refreshNotas();
       toast("Nota eliminada correctamente");
@@ -128,10 +138,10 @@ export default function EstudianteNotasTable({
         {estudianteId && asignaturaProfesorId && (
           <CustomDialog
             triggerText={
-              <>
+              <Button>
                 <PlusCircle />
                 Añadir nota
-              </>
+              </Button>
             }
             open={open}
             setOpen={setOpen}
@@ -145,6 +155,23 @@ export default function EstudianteNotasTable({
             />
           </CustomDialog>
         )}
+
+        <CustomDialog
+          triggerText={<div className="hidden"></div>}
+          open={openDelete}
+          setOpen={setOpenDelete}
+        >
+          <p className="my-4">
+            ¿Está seguro/a que desea eliminar la <strong>nota</strong>
+            ?
+          </p>
+          <Button
+            onClick={() => removeNota()}
+            variant="destructive"
+          >
+            Eliminar
+          </Button>
+        </CustomDialog>
       </div>
       <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
@@ -177,26 +204,36 @@ export default function EstudianteNotasTable({
                 <TableCell className="border">{nota.fecha}</TableCell>
                 <TableCell className="border">{nota.observacion}</TableCell>
                 <TableCell className="space-x-2">
-                  <Button
-                    onClick={() => {
-                      setOpen(true), setNotaSelected(nota);
-                    }}
-                    size="sm"
-                  >
-                    <Edit2 />
-                  </Button>
-                  <CustomDialog triggerText={<Trash2 color="red" />}>
-                    <p className="my-4">
-                      ¿Está seguro/a que desea eliminar la <strong>nota</strong>
-                      ?
-                    </p>
-                    <Button
-                      onClick={() => removeNota(nota)}
-                      variant="destructive"
-                    >
-                      Eliminar
-                    </Button>
-                  </CustomDialog>
+                  <DropdownMenu>
+                      <DropdownMenuTrigger className="p-2 block w-full shadow-sm hover:cursor-pointer hover:bg-slate-100">
+                        <EllipsisVertical size="14px" className="mx-auto" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="bg-white p-4 shadow space-y-2">
+                        <DropdownMenuItem>
+                          <button
+                            onClick={() => {
+                              setOpen(true), setNotaSelected(nota);
+                            }}
+                            className="flex items-center gap-2 p-2"
+                          >
+                            <Edit2 size="14px" />
+                            Editar
+                          </button>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <button
+                            onClick={() => {
+                              setOpenDelete(true),
+                                setNotaSelected(nota);
+                            }}
+                            className="flex items-center gap-2 p-2"
+                          >
+                            <Trash2 color="red" size="14px" />
+                            Eliminar
+                          </button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))
