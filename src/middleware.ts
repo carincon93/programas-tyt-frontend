@@ -78,8 +78,8 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
         });
       }
     }
-  } else {
-    console.warn("Usuario no autenticado.");
+  } else if (currentPath !== "/login") {
+    console.warn("Usuario no autenticado. Redirigiendo a login.");
     context.cookies.set("auth_token", "delete", {
       path: "/",
       expires: new Date(0),
@@ -90,6 +90,11 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
       path: "/",
       expires: new Date(0),
       maxAge: 0,
+    });
+
+    return new Response(null, {
+      status: 302,
+      headers: { Location: "/login" },
     });
   }
 
