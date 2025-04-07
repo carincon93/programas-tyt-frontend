@@ -74,7 +74,7 @@ export interface Asignatura {
   nombre: string;
   activo: boolean;
 
-  asignaturaProfesores: AsignaturaProfesor[];
+  asignaturaProfesores?: AsignaturaProfesor[];
 }
 
 export interface AsignaturaGrupo {

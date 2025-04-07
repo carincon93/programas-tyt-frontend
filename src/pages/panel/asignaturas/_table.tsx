@@ -74,7 +74,7 @@ const TableAsignaturas = ({
               </TableCell>
               <TableCell className="border">{asignatura.nombre}</TableCell>
               <TableCell className="border">
-                {asignatura.asignaturaProfesores.map((asignaturaProfesor) => (
+                {asignatura.asignaturaProfesores?.map((asignaturaProfesor) => (
                   <div key={asignaturaProfesor.id}>
                     {asignaturaProfesor.profesor.user?.nombres}{" "}
                     {asignaturaProfesor.profesor.user?.apellidos}
@@ -181,11 +181,7 @@ export default function AsignaturasTable() {
     if (!asignaturaSelected) return;
 
     const response = await createOrUpdateAsignatura(asignaturaSelected, {
-      activo: asignaturaSelected.activo ? false : true,
-      asignaturaProfesores:
-        asignaturaSelected.asignaturaProfesores.length > 0
-          ? asignaturaSelected.asignaturaProfesores
-          : undefined,
+      activo: asignaturaSelected.activo ? false : true
     });
 
     if (response.ok) {
