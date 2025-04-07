@@ -39,7 +39,7 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
 
   console.log(authUser);
 
-  if (authUser) {
+  if (authUser?.role) {
     // Guardar el authUser en locals
     context.locals.authUser = authUser || null;
 
@@ -78,6 +78,19 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
         });
       }
     }
+  } else {
+    console.warn("Usuario no autenticado.");
+    context.cookies.set("auth_token", "delete", {
+      path: "/",
+      expires: new Date(0),
+      maxAge: 0,
+    });
+
+    context.cookies.set("refresh_token", "delete", {
+      path: "/",
+      expires: new Date(0),
+      maxAge: 0,
+    });
   }
 
   return next();
