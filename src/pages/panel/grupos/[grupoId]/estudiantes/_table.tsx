@@ -36,6 +36,10 @@ export default function GruposTable({ grupoId }: GruposTableProps) {
     fetchGrupoById();
   }, []);
 
+  useEffect(() => {
+    fetchGrupoById();
+  }, [openNota, openAsistencia]);
+
   console.log(grupo?.estudiantes);
 
   return (
