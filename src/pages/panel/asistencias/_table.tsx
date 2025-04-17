@@ -47,6 +47,9 @@ export default function ListaAsistenciasTable() {
             <TableHead className="text-left border font-bold text-black">
               Fecha
             </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Periodo
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -73,6 +76,7 @@ export default function ListaAsistenciasTable() {
                   {asistencia.observacion}
                 </TableCell>
                 <TableCell className="border">{asistencia.fecha}</TableCell>
+                <TableCell className="border">{asistencia.periodo}</TableCell>
               </TableRow>
             ))
           ) : (

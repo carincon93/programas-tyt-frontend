@@ -44,6 +44,9 @@ export default function NotasTable() {
             <TableHead className="text-left border font-bold text-black">
               Fecha
             </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Periodo
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -51,20 +54,21 @@ export default function NotasTable() {
             notas.map((nota) => (
               <TableRow key={nota.id}>
                 <TableCell className="border">
-                  {nota.asignaturaProfesor.asignatura.nombre}
+                  {nota.asignaturaProfesor?.asignatura.nombre}
                 </TableCell>
                 <TableCell className="border">
-                  {nota.asignaturaProfesor.profesor.user.nombres +
+                  {nota.asignaturaProfesor?.profesor.user.nombres +
                     " " +
-                    nota.asignaturaProfesor.profesor.user.apellidos}
+                    nota.asignaturaProfesor?.profesor.user.apellidos}
                 </TableCell>
                 <TableCell className="border">
-                  {nota.estudiante.user.nombres +
+                  {nota.estudiante?.user.nombres +
                     " " +
-                    nota.estudiante.user.apellidos}
+                    nota.estudiante?.user.apellidos}
                 </TableCell>
                 <TableCell className="border">{nota.nota}</TableCell>
                 <TableCell className="border">{nota.fecha}</TableCell>
+                <TableCell className="border">{nota.periodo}</TableCell>
               </TableRow>
             ))
           ) : (
