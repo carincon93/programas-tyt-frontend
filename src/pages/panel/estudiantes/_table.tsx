@@ -96,7 +96,7 @@ const TableEstudiantes = ({
                         className="inline-flex justify-center items-center gap-1 hover:opacity-60"
                       >
                         <FileDigit size={10} />
-                        Notas
+                        Histórico de notas
                       </a>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
@@ -105,11 +105,12 @@ const TableEstudiantes = ({
                         className="inline-flex justify-center items-center gap-1 hover:opacity-60"
                       >
                         <ListTodo size={10} />
-                        Asistencias
+                        Histórico de asistencias
                       </a>
                     </DropdownMenuItem>
 
                     <DropdownMenuSeparator />
+                    
                     <DropdownMenuItem>
                       <button
                         onClick={() => {

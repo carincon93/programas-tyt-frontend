@@ -46,6 +46,7 @@ export interface Grupo {
 
   programa: Programa;
   estudiantes: Estudiante[];
+  horarios: AsignaturaGrupo[];
 }
 
 export interface Profesor {
@@ -66,6 +67,8 @@ export interface Estudiante {
   institucion: Institucion;
   user: Partial<User>;
   grupo: Partial<Grupo>;
+  notas: Nota[];
+  asistencias: Asistencia[];
 }
 
 export interface Asignatura {
@@ -114,10 +117,11 @@ export interface Nota {
   nota: number;
   fecha: string;
   observacion: string;
+  periodo: string;
   estudianteId: number;
   asignaturaProfesorId: number;
-  estudiante: Estudiante;
-  asignaturaProfesor: AsignaturaProfesor;
+  estudiante?: Estudiante;
+  asignaturaProfesor?: AsignaturaProfesor;
 }
 
 export interface Asistencia {
@@ -125,6 +129,7 @@ export interface Asistencia {
   asiste: boolean;
   fecha: string;
   observacion: string;
+  periodo: string;
   estudianteId: number;
   asignaturaProfesorId: number;
   estudiante: Estudiante;

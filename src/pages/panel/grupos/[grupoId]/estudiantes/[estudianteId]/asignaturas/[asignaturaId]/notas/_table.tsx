@@ -198,7 +198,7 @@ export default function EstudianteNotasTable({
             notas.map((nota) => (
               <TableRow key={nota.id}>
                 <TableCell className="border">
-                  {nota.asignaturaProfesor.asignatura.nombre}
+                  {nota.asignaturaProfesor?.asignatura.nombre}
                 </TableCell>
                 <TableCell className="border">{nota.nota}</TableCell>
                 <TableCell className="border">{nota.fecha}</TableCell>

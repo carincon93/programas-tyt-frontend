@@ -49,10 +49,11 @@ export default function EstudianteAsignaturasTable({
 
   return (
     <div>
-      <h1>
-        <span className="bg-amber-500 py-1 px-4 rounded-md text-white mr-2 font-medium">
-          Estudiante:
-        </span>{" "}
+      <h1 className="bg-amber-500 py-1 pr-4 rounded-md text-white inline-block">
+        <span className="bg-amber-500 py-1 pl-4 rounded-md text-white mr-2 font-medium">
+          Estudiante:{" "}
+        </span>
+
         {estudiante ? (
           <>{estudiante?.user.nombres + " " + estudiante?.user.apellidos}</>
         ) : (
@@ -70,13 +71,16 @@ export default function EstudianteAsignaturasTable({
               Profesor
             </TableHead>
             <TableHead className="text-left border font-bold text-black">
-              Fecha
+              Periodo #1
             </TableHead>
             <TableHead className="text-left border font-bold text-black">
-              Hora inicio / Hora fin
+              Periodo #2
             </TableHead>
-            <TableHead className="text-center font-bold w-[100px] text-black">
-              Acciones
+            <TableHead className="text-left border font-bold text-black">
+              Periodo #3
+            </TableHead>
+            <TableHead className="text-left border font-bold text-black">
+              Periodo #4
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -92,12 +96,54 @@ export default function EstudianteAsignaturasTable({
                   {asignaturaGrupo.asignaturaProfesor.profesor.user.apellidos}
                 </TableCell>
                 <TableCell className="border">
-                  {asignaturaGrupo.fecha}
+                  Nota:{" "}
+                  {estudiante?.notas
+                    .filter(
+                      (nota) =>
+                        nota.asignaturaProfesorId ===
+                        asignaturaGrupo.asignaturaProfesorId
+                    )
+                    .map((nota) => (
+                      <div key={nota.id}>{nota.nota}</div>
+                    ))}
                 </TableCell>
                 <TableCell className="border">
-                  {asignaturaGrupo.horaInicio + " - " + asignaturaGrupo.horaFin}
+                  Nota:{" "}
+                  {estudiante?.notas
+                    .filter(
+                      (nota) =>
+                        nota.asignaturaProfesorId ===
+                        asignaturaGrupo.asignaturaProfesorId
+                    )
+                    .map((nota) => (
+                      <div key={nota.id}>{nota.nota}</div>
+                    ))}
                 </TableCell>
-                <TableCell className="space-y-2">
+                <TableCell className="border">
+                  Nota:{" "}
+                  {estudiante?.notas
+                    .filter(
+                      (nota) =>
+                        nota.asignaturaProfesorId ===
+                        asignaturaGrupo.asignaturaProfesorId
+                    )
+                    .map((nota) => (
+                      <div key={nota.id}>{nota.nota}</div>
+                    ))}
+                </TableCell>
+                <TableCell className="border">
+                  Nota:{" "}
+                  {estudiante?.notas
+                    .filter(
+                      (nota) =>
+                        nota.asignaturaProfesorId ===
+                        asignaturaGrupo.asignaturaProfesorId
+                    )
+                    .map((nota) => (
+                      <div key={nota.id}>{nota.nota}</div>
+                    ))}
+                </TableCell>
+                {/* <TableCell className="space-y-2">
                   <a
                     href={`/panel/grupos/${grupoId}/estudiantes/${estudiante?.id}/asignaturas/${asignaturaGrupo.asignaturaProfesor.id}/notas`}
                     className="inline-flex justify-center items-center gap-1 underline hover:opacity-60"
@@ -113,12 +159,12 @@ export default function EstudianteAsignaturasTable({
                     <ExternalLink size={10} className="top-0.5 relative" />
                     Asistencias
                   </a>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={5}>No hay datos para mostrar</TableCell>
+              <TableCell colSpan={6}>No hay datos para mostrar</TableCell>
             </TableRow>
           )}
         </TableBody>
