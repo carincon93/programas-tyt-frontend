@@ -74,7 +74,7 @@ export default function GruposTable({ grupoId }: GruposTableProps) {
       <Table className="table-fixed w-full text-xs mt-4 border">
         <TableHeader>
           <TableRow>
-            <TableHead className="text-left w-[180px]">
+            <TableHead className="text-left w-[180px] font-bold text-black">
               Código del estudiante
             </TableHead>
             <TableHead className="text-left border font-bold text-black">
@@ -94,19 +94,19 @@ export default function GruposTable({ grupoId }: GruposTableProps) {
               <>
                 <TableRow key={estudiante.id}>
                   <TableCell
-                    className="border"
+                    className="border bg-slate-200"
                     rowSpan={estudiante.notas.length + 1}
                   >
                     {estudiante.codigoEstudiante}
                   </TableCell>
-                  <TableCell className="border">
+                  <TableCell className="border bg-slate-200">
                     {estudiante.user.nombres + " " + estudiante.user.apellidos}
                   </TableCell>
-                  <TableCell className="border">
+                  <TableCell className="border bg-slate-200">
                     {estudiante.institucion.nombre}
                   </TableCell>
 
-                  <TableCell className="text-right">
+                  <TableCell className="text-right bg-slate-200">
                     <DropdownMenu>
                       <DropdownMenuTrigger className="p-2 block w-full shadow-sm hover:cursor-pointer hover:bg-slate-100">
                         <EllipsisVertical size="14px" className="mx-auto" />
