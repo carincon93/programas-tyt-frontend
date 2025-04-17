@@ -1,4 +1,4 @@
-import type { Asignatura, Nota } from "@/lib/types";
+import type { Asignatura, Estudiante, Nota } from "@/lib/types";
 
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { Asterisk } from "lucide-react";
@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 
 interface EstudianteNotaFormProps {
-  estudianteId: number;
+  estudiante: Estudiante;
   setOpenNota: (open: boolean) => void;
   onNotaCreatedOrUpdated?: (result: {
     ok: boolean;
@@ -29,24 +29,18 @@ interface EstudianteNotaFormProps {
 }
 
 export default function EstudianteNotaForm({
-  estudianteId,
+  estudiante,
   setOpenNota,
   onNotaCreatedOrUpdated,
 }: EstudianteNotaFormProps) {
-  const [asignaturas, setAsignaturas] = useState<Asignatura[]>([]);
   const [formData, setFormData] = useState<Partial<Nota>>({
     asignaturaProfesorId: 0,
-    estudianteId: estudianteId,
+    estudianteId: estudiante.id,
     nota: 0,
     periodo: "",
     fecha: "",
     observacion: "",
   });
-
-  const fetchAsignaturas = async () => {
-    const response = await fetchAsignaturasData();
-    if (response.data) setAsignaturas(response.data);
-  };
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -77,10 +71,6 @@ export default function EstudianteNotaForm({
     toast(`Nota creada correctamente`);
   };
 
-  useEffect(() => {
-    fetchAsignaturas();
-  }, []);
-
   return (
     <form onSubmit={submit} className="space-y-8">
       <fieldset>
@@ -91,7 +81,7 @@ export default function EstudianteNotaForm({
           Asignatura <Asterisk size={12} strokeWidth={1} />
         </Label>
 
-        {asignaturas.length > 0 ? (
+        {estudiante.grupo.horarios && estudiante.grupo.horarios.length > 0 ? (
           <Select
             name="asignaturaProfesorId"
             onValueChange={(value) =>
@@ -104,20 +94,14 @@ export default function EstudianteNotaForm({
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {asignaturas.map((asignatura) => (
-                  <>
-                    {asignatura.asignaturaProfesores?.map(
-                      (asignaturaProfesor, index) => (
-                        <SelectItem
-                          key={index}
-                          value={asignaturaProfesor.id.toString()}
-                        >
-                          {asignatura.nombre} /{" "}
-                          {asignaturaProfesor.profesor.user.nombres}
-                        </SelectItem>
-                      )
-                    )}
-                  </>
+                {estudiante.grupo.horarios.map((asignatura, index) => (
+                  <SelectItem
+                    key={index}
+                    value={asignatura.asignaturaProfesorId.toString()}
+                  >
+                    {asignatura.asignaturaProfesor.asignatura.nombre} /{" "}
+                    {asignatura.asignaturaProfesor.profesor.user.nombres}
+                  </SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>

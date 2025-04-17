@@ -52,7 +52,7 @@ export default function GruposTable({ grupoId }: GruposTableProps) {
       >
         {estudianteSelected?.id && (
           <EstudianteNotaForm
-            estudianteId={estudianteSelected?.id}
+            estudiante={estudianteSelected}
             setOpenNota={setOpenNota}
           />
         )}
@@ -65,7 +65,7 @@ export default function GruposTable({ grupoId }: GruposTableProps) {
       >
         {estudianteSelected?.id && (
           <EstudianteAsistenciaForm
-            estudianteId={estudianteSelected?.id}
+            estudiante={estudianteSelected}
             setOpenAsistencia={setOpenAsistencia}
           />
         )}

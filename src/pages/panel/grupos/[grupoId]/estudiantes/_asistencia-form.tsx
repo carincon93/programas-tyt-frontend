@@ -1,4 +1,4 @@
-import type { Asignatura, Asistencia } from "@/lib/types";
+import type { Asignatura, Asistencia, Estudiante } from "@/lib/types";
 
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { Asterisk } from "lucide-react";
@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { fetchAsignaturasData } from "@/services/asignatura.service";
 
 interface EstudianteAsistenciaFormProps {
-  estudianteId: number;
+  estudiante: Estudiante;
   setOpenAsistencia: (open: boolean) => void;
   onAsistenciaCreatedOrUpdated?: (result: {
     ok: boolean;
@@ -30,25 +30,18 @@ interface EstudianteAsistenciaFormProps {
 }
 
 export default function EstudianteAsistenciaForm({
-  estudianteId,
+  estudiante,
   setOpenAsistencia,
   onAsistenciaCreatedOrUpdated,
 }: EstudianteAsistenciaFormProps) {
-  const [asignaturas, setAsignaturas] = useState<Asignatura[]>([]);
-
   const [formData, setFormData] = useState<Partial<Asistencia>>({
     asignaturaProfesorId: undefined,
-    estudianteId: undefined,
+    estudianteId: estudiante.id,
     asiste: false,
     fecha: "",
     periodo: "",
     observacion: "",
   });
-
-  const fetchAsignaturas = async () => {
-    const response = await fetchAsignaturasData();
-    if (response.data) setAsignaturas(response.data);
-  };
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -66,7 +59,7 @@ export default function EstudianteAsistenciaForm({
 
     const result = await createOrUpdateAsistencia(
       formData.asignaturaProfesorId!,
-      estudianteId!,
+      formData.estudianteId!,
       undefined,
       formData
     );
@@ -80,9 +73,6 @@ export default function EstudianteAsistenciaForm({
     }
   };
 
-  useEffect(() => {
-    fetchAsignaturas();
-  }, []);
 
   return (
     <form onSubmit={submit} className="space-y-8">
@@ -94,7 +84,15 @@ export default function EstudianteAsistenciaForm({
           Asignatura <Asterisk size={12} strokeWidth={1} />
         </Label>
 
-        {asignaturas.length > 0 ? (
+        <fieldset>
+        <Label
+          htmlFor="asignaturaProfesorId"
+          className="flex items-center gap-1 mb-4"
+        >
+          Asignatura <Asterisk size={12} strokeWidth={1} />
+        </Label>
+
+        {estudiante.grupo.horarios && estudiante.grupo.horarios.length > 0 ? (
           <Select
             name="asignaturaProfesorId"
             onValueChange={(value) =>
@@ -107,20 +105,14 @@ export default function EstudianteAsistenciaForm({
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {asignaturas.map((asignatura) => (
-                  <>
-                    {asignatura.asignaturaProfesores?.map(
-                      (asignaturaProfesor, index) => (
-                        <SelectItem
-                          key={index}
-                          value={asignaturaProfesor.id.toString()}
-                        >
-                          {asignatura.nombre} /{" "}
-                          {asignaturaProfesor.profesor.user.nombres}
-                        </SelectItem>
-                      )
-                    )}
-                  </>
+                {estudiante.grupo.horarios.map((asignatura, index) => (
+                  <SelectItem
+                    key={index}
+                    value={asignatura.asignaturaProfesorId.toString()}
+                  >
+                    {asignatura.asignaturaProfesor.asignatura.nombre} /{" "}
+                    {asignatura.asignaturaProfesor.profesor.user.nombres}
+                  </SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
