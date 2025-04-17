@@ -95,7 +95,7 @@ export default function GruposTable({ grupoId }: GruposTableProps) {
                 <TableRow key={estudiante.id}>
                   <TableCell
                     className={`border ${index % 2 === 0 ? 'bg-slate-200' : 'bg-white'}`}
-                    rowSpan={estudiante.notas.length === 0 ? 2 : estudiante.notas.length + 1}
+                    rowSpan={estudiante.grupo.horarios && estudiante.grupo.horarios.length === 0 ? 2 : estudiante.grupo.horarios && estudiante.grupo.horarios.length + 1}
                   >
                     {estudiante.codigoEstudiante}
                   </TableCell>
