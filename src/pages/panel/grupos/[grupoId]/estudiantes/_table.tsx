@@ -160,7 +160,7 @@ export default function GruposTable({ grupoId }: GruposTableProps) {
                   estudiante.grupo.horarios.map((horario) => (
                     <TableRow key={horario.id}>
                       <TableCell className={`border ${index % 2 === 0 ? 'bg-slate-200' : 'bg-white'}`} colSpan={3}>
-                        <div className="pb-4">
+                        <div className="mb-6 bg-white rounded-md shadow-md">
                           <div className="p-2 border text-center bg-gray-200">
                             <strong>Asignatura:</strong>{" "}
                             {horario.asignaturaProfesor?.asignatura.nombre} |{" "}
