@@ -121,7 +121,6 @@ export default function EstudianteNotaForm({
           onValueChange={(value) =>
             setFormData((prev) => ({ ...prev, periodo: value }))
           }
-          defaultValue={formData.asignaturaProfesorId?.toString()}
         >
           <SelectTrigger>
             <SelectValue placeholder="Seleccione una opción" />

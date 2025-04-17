@@ -84,14 +84,6 @@ export default function EstudianteAsistenciaForm({
           Asignatura <Asterisk size={12} strokeWidth={1} />
         </Label>
 
-        <fieldset>
-        <Label
-          htmlFor="asignaturaProfesorId"
-          className="flex items-center gap-1 mb-4"
-        >
-          Asignatura <Asterisk size={12} strokeWidth={1} />
-        </Label>
-
         {estudiante.grupo.horarios && estudiante.grupo.horarios.length > 0 ? (
           <Select
             name="asignaturaProfesorId"
@@ -132,7 +124,6 @@ export default function EstudianteAsistenciaForm({
           onValueChange={(value) =>
             setFormData((prev) => ({ ...prev, periodo: value }))
           }
-          defaultValue={formData.asignaturaProfesorId?.toString()}
         >
           <SelectTrigger>
             <SelectValue placeholder="Seleccione una opción" />
