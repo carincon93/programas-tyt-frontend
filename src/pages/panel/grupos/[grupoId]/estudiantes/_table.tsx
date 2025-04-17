@@ -108,7 +108,7 @@ export default function GruposTable({ grupoId }: GruposTableProps) {
 
                   <TableCell className={`text-right ${index % 2 === 0 ? 'bg-slate-200' : 'bg-white'}`}>
                     <DropdownMenu>
-                      <DropdownMenuTrigger className="p-2 block w-full shadow-sm hover:cursor-pointer hover:bg-slate-100">
+                      <DropdownMenuTrigger className="p-2 block w-full shadow-sm hover:cursor-pointer bg-white hover:bg-slate-100">
                         <EllipsisVertical size="14px" className="mx-auto" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="bg-white p-4 shadow space-y-2">
