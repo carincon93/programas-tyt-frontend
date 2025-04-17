@@ -90,23 +90,23 @@ export default function GruposTable({ grupoId }: GruposTableProps) {
         </TableHeader>
         <TableBody>
           {grupo && grupo.estudiantes.length > 0 ? (
-            grupo.estudiantes.map((estudiante) => (
+            grupo.estudiantes.map((estudiante, index) => (
               <>
                 <TableRow key={estudiante.id}>
                   <TableCell
-                    className="border bg-slate-200"
-                    rowSpan={estudiante.notas.length + 1}
+                    className={`border ${index % 2 === 0 ? 'bg-slate-200' : 'bg-white'}`}
+                    rowSpan={estudiante.notas.length === 0 ? 2 : estudiante.notas.length + 1}
                   >
                     {estudiante.codigoEstudiante}
                   </TableCell>
-                  <TableCell className="border bg-slate-200">
+                  <TableCell className={`border ${index % 2 === 0 ? 'bg-slate-200' : 'bg-white'}`}>
                     {estudiante.user.nombres + " " + estudiante.user.apellidos}
                   </TableCell>
-                  <TableCell className="border bg-slate-200">
+                  <TableCell className={`border ${index % 2 === 0 ? 'bg-slate-200' : 'bg-white'}`}>
                     {estudiante.institucion.nombre}
                   </TableCell>
 
-                  <TableCell className="text-right bg-slate-200">
+                  <TableCell className={`text-right ${index % 2 === 0 ? 'bg-slate-200' : 'bg-white'}`}>
                     <DropdownMenu>
                       <DropdownMenuTrigger className="p-2 block w-full shadow-sm hover:cursor-pointer hover:bg-slate-100">
                         <EllipsisVertical size="14px" className="mx-auto" />
