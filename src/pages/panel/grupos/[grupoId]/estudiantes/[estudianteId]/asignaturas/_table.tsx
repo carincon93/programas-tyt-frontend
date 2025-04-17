@@ -102,6 +102,7 @@ export default function EstudianteAsignaturasTable({
                       (nota) =>
                         nota.asignaturaProfesorId ===
                         asignaturaGrupo.asignaturaProfesorId
+                        && nota.periodo === "1"
                     )
                     .map((nota) => (
                       <div key={nota.id}>{nota.nota}</div>
@@ -114,6 +115,7 @@ export default function EstudianteAsignaturasTable({
                       (nota) =>
                         nota.asignaturaProfesorId ===
                         asignaturaGrupo.asignaturaProfesorId
+                        && nota.periodo === "2"
                     )
                     .map((nota) => (
                       <div key={nota.id}>{nota.nota}</div>
@@ -126,6 +128,7 @@ export default function EstudianteAsignaturasTable({
                       (nota) =>
                         nota.asignaturaProfesorId ===
                         asignaturaGrupo.asignaturaProfesorId
+                        && nota.periodo === "3"
                     )
                     .map((nota) => (
                       <div key={nota.id}>{nota.nota}</div>
@@ -138,6 +141,7 @@ export default function EstudianteAsignaturasTable({
                       (nota) =>
                         nota.asignaturaProfesorId ===
                         asignaturaGrupo.asignaturaProfesorId
+                        && nota.periodo === "4"
                     )
                     .map((nota) => (
                       <div key={nota.id}>{nota.nota}</div>
