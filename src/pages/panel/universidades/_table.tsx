@@ -6,31 +6,13 @@ import {
 } from "@/services/universidad.service";
 import { useEffect, useState } from "react";
 import UniversidadForm from "./_form";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import {
-  Ban,
-  Check,
-  Edit2,
-  EllipsisVertical,
-  PlusCircle,
-  Trash2,
+  PlusCircle
 } from "lucide-react";
 import CustomDialog from "@/components/CustomDialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { UniversidadDataTable } from "./_data-table";
 
 interface TableProps {
   universidades: Universidad[];
@@ -46,80 +28,7 @@ const TableUniversidades = ({
   setUniversidadSelected,
 }: TableProps) => {
   return (
-    <Table className="table-fixed w-full text-xs mt-4 border">
-      <TableHeader>
-        <TableRow>
-          <TableHead className="text-left border font-bold text-black">
-            Nombre
-          </TableHead>
-          <TableHead className="text-left border font-bold text-black">
-            Dirección
-          </TableHead>
-          <TableHead className="text-left border font-bold text-black">
-            Teléfono
-          </TableHead>
-          <TableHead className="text-center font-bold w-[100px] text-black">
-            Acciones
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {universidades.length > 0 ? (
-          universidades.map((universidad) => (
-            <TableRow key={universidad.id}>
-              <TableCell className="border">{universidad.nombre}</TableCell>
-              <TableCell className="border">{universidad.direccion}</TableCell>
-              <TableCell className="border">{universidad.telefono}</TableCell>
-              <TableCell className="space-x-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="p-2 block w-full shadow-sm hover:cursor-pointer hover:bg-slate-100">
-                    <EllipsisVertical size="14px" className="mx-auto" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-white p-4 shadow space-y-2">
-                    <DropdownMenuItem>
-                      <button
-                        onClick={() => {
-                          setOpen(true), setUniversidadSelected(universidad);
-                        }}
-                        className="flex items-center gap-2 p-2"
-                      >
-                        <Edit2 size="14px" />
-                        Editar
-                      </button>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <button
-                        onClick={() => {
-                          setOpenDelete(true),
-                            setUniversidadSelected(universidad);
-                        }}
-                        className="flex items-center gap-2 p-2"
-                      >
-                        {universidad.activo ? (
-                          <>
-                            <Ban size="14px" />
-                            Inactivar
-                          </>
-                        ) : (
-                          <>
-                            <Check size="14px" />
-                            Activar
-                          </>
-                        )}
-                      </button>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan={4}>No hay datos para mostrar</TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <UniversidadDataTable universidades={universidades} setOpen={setOpen} setOpenDelete={setOpenDelete} setUniversidadSelected={setUniversidadSelected} />
   );
 };
 

@@ -6,31 +6,13 @@ import {
 } from "@/services/profesor.service";
 import { useEffect, useState } from "react";
 import ProfesorForm from "./_form";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import CustomDialog from "@/components/CustomDialog";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Edit2,
-  EllipsisVertical,
-  PlusCircle,
-  Trash2,
-  UserCheck,
-  UserRoundX,
+  PlusCircle
 } from "lucide-react";
 import { toast } from "sonner";
+import { ProfesorDataTable } from "./_data-table";
 
 interface TableProfesoresProps {
   profesores: Profesor[];
@@ -46,79 +28,7 @@ const TableProfesores = ({
   setProfesorSelected,
 }: TableProfesoresProps) => {
   return (
-    <Table className="table-fixed w-full text-xs mt-4 border">
-      <TableHeader>
-        <TableRow>
-          <TableHead className="text-left border font-bold text-black">
-            Nombre
-          </TableHead>
-          <TableHead className="text-left border font-bold text-black">
-            Universidad
-          </TableHead>
-          <TableHead className="text-center font-bold w-[100px] text-black">
-            Acciones
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {profesores.length > 0 ? (
-          profesores.map((profesor) => (
-            <TableRow key={profesor.id}>
-              <TableCell className="border">
-                {profesor.user.nombres + " " + profesor.user.apellidos}
-              </TableCell>
-              <TableCell className="border">
-                {profesor.universidad.nombre}
-              </TableCell>
-              <TableCell className="space-x-2 text-right">
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="p-2 block w-full shadow-sm hover:cursor-pointer hover:bg-slate-100">
-                    <EllipsisVertical size="14px" className="mx-auto" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-white p-4 shadow space-y-2">
-                    <DropdownMenuItem>
-                      <button
-                        onClick={() => {
-                          setOpen(true), setProfesorSelected(profesor);
-                        }}
-                        className="flex items-center gap-2 p-2"
-                      >
-                        <Edit2 size="14px" />
-                        Editar
-                      </button>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <button
-                        onClick={() => {
-                          setOpenDelete(true), setProfesorSelected(profesor);
-                        }}
-                        className="flex items-center gap-2 p-2"
-                      >
-                        {profesor.user.activo ? (
-                          <>
-                            <UserRoundX size="14px" />
-                            Inactivar
-                          </>
-                        ) : (
-                          <>
-                            <UserCheck size="14px" />
-                            Activar
-                          </>
-                        )}
-                      </button>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan={3}>No hay datos para mostrar</TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <ProfesorDataTable profesores={profesores} setOpen={setOpen} setOpenDelete={setOpenDelete} setProfesorSelected={setProfesorSelected} />
   );
 };
 
