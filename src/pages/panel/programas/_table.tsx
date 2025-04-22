@@ -6,31 +6,13 @@ import {
 } from "@/services/programa.service";
 import { useEffect, useState } from "react";
 import ProgramaForm from "./_form";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import CustomDialog from "@/components/CustomDialog";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Ban,
-  Check,
-  Edit2,
-  EllipsisVertical,
-  PlusCircle,
-  Trash2,
+  PlusCircle
 } from "lucide-react";
 import { toast } from "sonner";
+import { ProgramaDataTable } from "./_data-table";
 
 interface TableProps {
   programas: Programa[];
@@ -46,83 +28,7 @@ const TableProgramas = ({
   setProgramaSelected,
 }: TableProps) => {
   return (
-    <Table className="table-fixed w-full text-xs mt-4 border">
-      <TableHeader>
-        <TableRow>
-          <TableHead className="text-left border font-bold text-black">
-            Nombre
-          </TableHead>
-          <TableHead className="text-left border font-bold text-black">
-            Código del programa
-          </TableHead>
-          <TableHead className="text-left border font-bold text-black">
-            Universidad
-          </TableHead>
-          <TableHead className="text-center font-bold w-[100px] text-black">
-            Acciones
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {programas.length > 0 ? (
-          programas.map((programa) => (
-            <TableRow key={programa.id}>
-              <TableCell className="border">{programa.nombre}</TableCell>
-              <TableCell className="border">
-                {programa.codigoPrograma}
-              </TableCell>
-              <TableCell className="border">
-                {programa.universidad.nombre}
-              </TableCell>
-              <TableCell className="space-x-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="p-2 block w-full shadow-sm hover:cursor-pointer hover:bg-slate-100">
-                    <EllipsisVertical size="14px" className="mx-auto" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-white p-4 shadow space-y-2">
-                    <DropdownMenuItem>
-                      <button
-                        onClick={() => {
-                          setOpen(true), setProgramaSelected(programa);
-                        }}
-                        className="flex items-center gap-2 p-2"
-                      >
-                        <Edit2 size="14px" />
-                        Editar
-                      </button>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <button
-                        onClick={() => {
-                          setOpenDelete(true), setProgramaSelected(programa);
-                        }}
-                        className="flex items-center gap-2 p-2"
-                      >
-                        {programa.activo ? (
-                          <>
-                            <Ban size="14px" />
-                            Inactivar
-                          </>
-                        ) : (
-                          <>
-                            <Check size="14px" />
-                            Activar
-                          </>
-                        )}
-                      </button>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan={4}>No hay datos para mostrar</TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <ProgramaDataTable programas={programas} setOpen={setOpen} setOpenDelete={setOpenDelete} setProgramaSelected={setProgramaSelected} />
   );
 };
 
