@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import AsignaturaProfesoresForm from "./_form-profesores";
 import { toast } from "sonner";
+import { AsignaturaDataTable } from "./_data-table";
 
 interface TableProps {
   asignaturas: Asignatura[];
@@ -50,112 +51,7 @@ const TableAsignaturas = ({
   refreshAsignaturas,
 }: TableProps) => {
   return (
-    <Table className="table-fixed w-full text-xs mt-4 border">
-      <TableHeader>
-        <TableRow>
-          <TableHead className="text-left w-[110px]">Código</TableHead>
-          <TableHead className="text-left border font-bold text-black">
-            Nombre
-          </TableHead>
-          <TableHead className="text-left border font-bold text-black">
-            Profesores
-          </TableHead>
-          <TableHead className="text-center font-bold w-[100px] text-black">
-            Acciones
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {asignaturas.length > 0 ? (
-          asignaturas.map((asignatura) => (
-            <TableRow key={asignatura.id}>
-              <TableCell className="border">
-                {asignatura.codigoAsignatura}
-              </TableCell>
-              <TableCell className="border">{asignatura.nombre}</TableCell>
-              <TableCell className="border">
-                {asignatura.asignaturaProfesores?.map((asignaturaProfesor) => (
-                  <div key={asignaturaProfesor.id}>
-                    {asignaturaProfesor.profesor.user?.nombres}{" "}
-                    {asignaturaProfesor.profesor.user?.apellidos}
-                    {" - "}
-                    <a
-                      href={`/panel/asignaturas/${asignaturaProfesor.id}/profesores/${asignaturaProfesor.profesor.id}/horarios`}
-                      className="inline-flex justify-center items-center gap-1 underline hover:opacity-60"
-                    >
-                      <ExternalLink size={10} className="top-0.5 relative" />
-                      Revisar horario
-                    </a>
-                  </div>
-                ))}
-                <div className="mt-4">
-                  <CustomDialog
-                    triggerText={
-                      <small className="inline-flex items-center gap-2">
-                        <PlusCircle size={10} /> Asociar
-                      </small>
-                    }
-                    title="Asignar profesores"
-                  >
-                    <AsignaturaProfesoresForm
-                      asignatura={asignatura}
-                      onAsignaturaProfesoresCreatedOrUpdated={
-                        refreshAsignaturas
-                      }
-                    />
-                  </CustomDialog>
-                </div>
-              </TableCell>
-              <TableCell className="border">
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="p-2 block w-full shadow-sm hover:cursor-pointer hover:bg-slate-100">
-                    <EllipsisVertical size="14px" className="mx-auto" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-white p-4 shadow space-y-2">
-                    <DropdownMenuItem>
-                      <button
-                        onClick={() => {
-                          setOpen(true), setAsignaturaSelected(asignatura);
-                        }}
-                        className="flex items-center gap-2 p-2"
-                      >
-                        <Edit2 size="14px" />
-                        Editar
-                      </button>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <button
-                        onClick={() => {
-                          setOpenDelete(true),
-                            setAsignaturaSelected(asignatura);
-                        }}
-                        className="flex items-center gap-2 p-2"
-                      >
-                        {asignatura.activo ? (
-                          <>
-                            <Ban size="14px" />
-                            Inactivar
-                          </>
-                        ) : (
-                          <>
-                            <Check size="14px" />
-                            Activar
-                          </>
-                        )}
-                      </button>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan={4}>No hay datos para mostrar</TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <AsignaturaDataTable asignaturas={asignaturas} setOpen={setOpen} setOpenDelete={setOpenDelete} setAsignaturaSelected={setAsignaturaSelected} refreshAsignaturas={refreshAsignaturas} />
   );
 };
 

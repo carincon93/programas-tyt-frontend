@@ -2,10 +2,12 @@ import { Button } from "@/components/ui/button";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
   ArrowUpDown,
+  Ban,
+  Check,
   Edit2,
+  ExternalLink,
   MoreVertical,
-  UserCheck,
-  UserRoundX,
+  PlusCircle,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -15,22 +17,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { User } from "@/lib/types";
+import type { Asignatura } from "@/lib/types";
+import CustomDialog from "@/components/CustomDialog";
+import AsignaturaProfesoresForm from "./_form-profesores";
 
 interface ColumnsProps {
   setOpen: (open: boolean) => void;
   setOpenDelete: (open: boolean) => void;
-  setUserSelected: (user: User) => void;
+  setAsignaturaSelected: (asignatura: Asignatura) => void;
+  refreshAsignaturas: () => Promise<void>;
 }
 
 export const columns = ({
   setOpen,
   setOpenDelete,
-  setUserSelected,
-}: ColumnsProps): ColumnDef<User>[] => [
+  setAsignaturaSelected,
+  refreshAsignaturas,
+}: ColumnsProps): ColumnDef<Asignatura>[] => [
   {
-    id: "Nombres",
-    accessorFn: (row) => row.nombres,
+    id: "Nombre",
+    accessorFn: (row) => row.nombre,
     header: ({ column }) => {
       return (
         <Button
@@ -38,7 +44,7 @@ export const columns = ({
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Nombres
+          Nombre
           <ArrowUpDown />
         </Button>
       );
@@ -47,9 +53,10 @@ export const columns = ({
       <div className="uppercase">{getValue() as string}</div>
     ),
   },
+ 
   {
-    id: "Apellidos",
-    accessorFn: (row) => row.apellidos,
+    id: "Profsores",
+    accessorKey: "profesores",
     header: ({ column }) => {
       return (
         <Button
@@ -57,34 +64,45 @@ export const columns = ({
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Apellidos
+          Profsores
           <ArrowUpDown />
         </Button>
       );
     },
-    cell: ({ getValue }) => (
-      <div className="uppercase">{getValue() as string}</div>
+    cell: ({ row }) => (
+        <div>
+            {row.original.asignaturaProfesores?.map((asignaturaProfesor) => (
+                <div key={asignaturaProfesor.id}>
+                {asignaturaProfesor.profesor.user?.nombres}{" "}
+                {asignaturaProfesor.profesor.user?.apellidos}
+                {" - "}
+                <a
+                    href={`/panel/asignaturas/${asignaturaProfesor.id}/profesores/${asignaturaProfesor.profesor.id}/horarios`}
+                    className="inline-flex justify-center items-center gap-1 underline hover:opacity-60"
+                >
+                    <ExternalLink size={10} className="top-0.5 relative" />
+                    Revisar horario
+                </a>
+                </div>
+            ))}
+            <div className="mt-4">
+                <CustomDialog
+                triggerText={
+                    <small className="inline-flex items-center gap-2">
+                    <PlusCircle size={10} /> Asociar
+                    </small>
+                }
+                title="Asignar profesores"
+                >
+                <AsignaturaProfesoresForm
+                    asignatura={row.original}
+                    onAsignaturaProfesoresCreatedOrUpdated={refreshAsignaturas}
+                />
+                </CustomDialog>
+            </div>
+          </div>
     ),
   },
-//   {
-//     id: "Rol",
-//     accessorFn: (row) => row.rol.nombre,
-//     header: ({ column }) => {
-//       return (
-//         <Button
-//           className="!pl-0 text-xs uppercase text-black"
-//           variant="ghost"
-//           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-//         >
-//           Rol
-//           <ArrowUpDown />
-//         </Button>
-//       );
-//     },
-//     cell: ({ getValue }) => (
-//       <div className="uppercase">{getValue() as string}</div>
-//     ),
-//   },
   {
     id: "actions",
     enableHiding: false,
@@ -103,30 +121,30 @@ export const columns = ({
 
             <DropdownMenuItem
               onClick={() => {
-                setOpen(true), setUserSelected(row.original);
+                setOpen(true), setAsignaturaSelected(row.original);
               }}
             >
               <Edit2 />
               Editar
             </DropdownMenuItem>
 
-            {/* <DropdownMenuItem
+            <DropdownMenuItem
               onClick={() => {
-                setOpenDelete(true), setUserSelected(row.original);
+                setOpenDelete(true), setAsignaturaSelected(row.original);
               }}
             >
               {row.original.activo ? (
                 <>
-                  <UserRoundX size="14px" />
+                  <Ban size="14px" />
                   Inactivar
                 </>
               ) : (
                 <>
-                  <UserCheck size="14px" />
+                  <Check size="14px" />
                   Activar
                 </>
               )}
-            </DropdownMenuItem> */}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
