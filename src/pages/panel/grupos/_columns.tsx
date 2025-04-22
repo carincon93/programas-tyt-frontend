@@ -43,7 +43,7 @@ export const columns = ({
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Institución
+          Código del grupo
           <ArrowUpDown />
         </Button>
       );
