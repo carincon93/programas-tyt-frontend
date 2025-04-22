@@ -69,7 +69,7 @@ import {
       },
     });
   
-    const [columnToFilter, setColumnToFilter] = useState("Nombres");
+    const [columnToFilter, setColumnToFilter] = useState("Código del grupo");
   
     return (
       <div className="w-full">
